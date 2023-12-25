@@ -1,0 +1,15 @@
+substitutions:
+  name: alarm-panel-59b9ac
+packages:
+  konnected.alarm-panel-esp8266: github://konnected-io/konnected-esphome/alarm-panel-esp8266.yaml@master
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+api:
+  encryption:
+    key: !secret alarm-panel-59b9ac-api_encryption_key
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

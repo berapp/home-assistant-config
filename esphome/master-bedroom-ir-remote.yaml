@@ -1,0 +1,81 @@
+esphome:
+  name: master-bedroom-ir-remote
+  friendly_name: Master Bedroom IR Remote
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret master-bedroom-ir-remote-api_encryption_key
+
+ota:
+  password: !secret master-bedroom-ir-remote-ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Master-Bedroom-Ir-Remote"
+    password: !secret master-bedroom-ir-remote-ap_password
+# status_led:
+#   pin:
+#     number: GPIO2 #ESP8266 OnBroad LED
+#     inverted: true
+
+captive_portal:
+remote_transmitter:
+  pin: GPIO13
+  # Infrared remotes use a 50% carrier signal
+  carrier_duty_percent: 50%
+switch:
+  - platform: template
+    name: "Bedroom TV Power"
+    turn_on_action:
+      remote_transmitter.transmit_lg:
+        data: 0x20DF10EF # power on/off
+        nbits: 32
+  - platform: template
+    name: "Bedroom TV Volume -"
+    turn_on_action:
+      remote_transmitter.transmit_lg:
+        data: 0x20DFC03F
+        nbits: 32
+  - platform: template
+    name: "Receiver Volume UP"
+    turn_on_action:
+      remote_transmitter.transmit_nec:
+        address: 0x857A
+        command: 0xE51A
+  - platform: template
+    name: "Receiver Volume DOWN"
+    turn_on_action:
+      remote_transmitter.transmit_nec:
+        address: 0x857A
+        command: 0xE41B
+# # Volume UP
+# [12:56:42][I][remote.jvc:049]: Received JVC: data=0x5EA1
+# [12:56:42][I][remote.lg:054]: Received LG: data=0x5EA158A7, nbits=32
+# [12:56:42][I][remote.nec:070]: Received NEC: address=0x857A, command=0xE51A
+# [12:56:42][I][remote.pioneer:149]: Received Pioneer: rc_code_X=0x5E1A
+# [12:56:42][I][remote.pronto:237]: Received Pronto: data=0000 006D 0022 0000 0157 00B3 0013 0019 0012 0044 0014 0019 0012 0044 0014 0043 0013 0045 0013 0043 0013 001A 0013 0043 0013 0019 0012 0044 0013 001A 0012 001A 0012 001A 0013 0018 0014 0044 0012 001A 0013 0043 0013 0019 0014 0043
+# [12:56:42][I][remote.pronto:239]: 0014 0044 0012 001A 0012 001A 0013 0019 0013 0044 0013 0019 0012 0044 0014 0019 0013 0019 0012 0044 0014 0044 0012 0045 0012 0181 06C3
+
+# Volume DOWN
+# [12:57:50][I][remote.jvc:049]: Received JVC: data=0x5EA1
+# [12:57:50][I][remote.lg:054]: Received LG: data=0x5EA1D827, nbits=32
+# [12:57:50][I][remote.nec:070]: Received NEC: address=0x857A, command=0xE41B
+# [12:57:50][I][remote.pioneer:149]: Received Pioneer: rc_code_X=0x5E1B
+# [12:57:50][I][remote.pronto:237]: Received Pronto: data=0000 006D 0022 0000 0158 00B2 0013 0018 0014 0044 0012 001A 0012 0044 0014 0044 0013 0043 0014 0044 0012 0019 0014 0044 0013 0019 0013 0043 0013 001A 0013 0019 0013 0019 0013 0019 0013 0044 0013 0043 0014 0044 0012 001A 0013 0043
+# [12:57:50][I][remote.pronto:239]: 0014 0043 0013 001A 0012 001A 0012 001A 0013 0019 0013 0018 0013 0045 0012 001A 0013 0019 0013 0044 0013 0044 0012 0045 0012 0181 06C3
+# [12:57:50][W][component:214]: Component remote_receiver took a long time for an operation (0.06 s).
+# [12:57:50][W][component:215]: Components should block for at most 20-30ms.
+# [12:57:50][I][remote.pronto:237]: Received Pronto: data=0000 006D 0002 0000 0156 005B 0013 0181 06C3
