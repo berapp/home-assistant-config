@@ -105,7 +105,7 @@ i2s_audio:
   - id: mic_adc
     i2s_lrclk_pin: GPIO26 #GPIO9 #ws
     i2s_bclk_pin: GPIO27 #GPIO10 #clk
-    # i2s_mclk_pin: GPIO0 #GPIO20
+    i2s_mclk_pin: GPIO0 #GPIO20
     
 
 speaker:
