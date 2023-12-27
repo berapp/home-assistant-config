@@ -32,9 +32,9 @@ i2s_audio:
   - id: i2s_mic
     i2s_lrclk_pin: GPIO25
     i2s_bclk_pin: GPIO32
-  - id: i2s_amp
-    i2s_lrclk_pin: GPIO25
-    i2s_bclk_pin: GPIO26
+  # - id: i2s_amp
+    # i2s_lrclk_pin: GPIO25
+    # i2s_bclk_pin: GPIO26
 
 microphone:
   - platform: i2s_audio
@@ -44,17 +44,17 @@ microphone:
     i2s_din_pin: GPIO33
     pdm: false
     bits_per_sample: 32bit
-speaker: #media player won't work currently with Piper, have to use speaker component. Media player works with cloud.
-  - platform: i2s_audio
-    id: media_out
-    dac_type: external
-    i2s_audio_id: i2s_amp
-    i2s_dout_pin: GPIO22
-    mode: mono
+# speaker: #media player won't work currently with Piper, have to use speaker component. Media player works with cloud.
+#   - platform: i2s_audio
+#     id: media_out
+#     dac_type: external
+#     i2s_audio_id: i2s_amp
+#     i2s_dout_pin: GPIO22
+#     mode: mono
 voice_assistant:
   id: voice_asst
   microphone: feather_microphone
-  speaker: media_out
+  # speaker: media_out
   noise_suppression_level: 4
   auto_gain: 10dBFS
   volume_multiplier: 2
