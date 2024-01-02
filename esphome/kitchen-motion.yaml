@@ -65,6 +65,14 @@ status_led:
 
     
 switch:
+  - platform: template
+    id: stayon
+    name: "Stay On"
+    optimistic: true
+  - platform: template
+    id: stayoff
+    name: "Stay Off"
+    optimistic: true
   - platform: ld2410
     engineering_mode:
       name: "engineering mode"

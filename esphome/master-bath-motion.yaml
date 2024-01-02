@@ -85,10 +85,17 @@ status_led:
 #       name: Still Target
 # status_led:
 #   pin:
-#     number: GPIO2 #ESP8266 OnBroad LED
+#     number: GPIO2 #ESP8266 OnBoard LED
 #     inverted: False
-    
 switch:
+  - platform: template
+    id: stayon
+    name: "Stay On"
+    optimistic: true
+  - platform: template
+    id: stayoff
+    name: "Stay Off"
+    optimistic: true
   - platform: ld2410
     engineering_mode:
       name: "engineering mode"
