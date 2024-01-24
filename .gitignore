@@ -48,3 +48,4 @@ esphome/trash
 nest
 blueprints
 .HA_VERSION
+.shopping_list.json
