@@ -28,4 +28,53 @@ wifi:
     password: !secret meatthermometer-ap_password
 
 captive_portal:
-    
+sensor:
+  - platform: ntc
+    sensor: resistance_sensor
+    accuracy_decimals: 0
+    filters:
+    - sliding_window_moving_average:
+        window_size: 5
+        send_every: 1
+    - clamp:
+        min_value: 5
+        ignore_out_of_range: true
+    calibration:
+      - 429570Ohm -> 0°C
+      - 86600Ohm -> 50°C
+      - 20250Ohm -> 100°C
+    name: NTC Temperature
+
+  # Example source sensors:
+  - platform: resistance
+    id: resistance_sensor
+    sensor: source_sensor
+    accuracy_decimals: 0
+    filters:
+    - clamp:
+        max_value: 400000
+        min_value: 250
+        ignore_out_of_range: true
+    configuration: DOWNSTREAM
+    resistor: 9990Ohm
+    # resistor: 4700Ohm
+    name: Resistance Sensor
+  - platform: adc
+    id: source_sensor
+    pin: GPIO34
+    attenuation: auto
+    # update_interval: 5s
+
+
+
+switch:
+  - platform: gpio
+    pin: GPIO32
+    id: ntc_vcc
+
+interval:
+  - interval: 5s
+    then:
+      - switch.turn_on: ntc_vcc
+      - component.update: source_sensor
+      - switch.turn_off: ntc_vcc
