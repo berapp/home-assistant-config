@@ -1,5 +1,52 @@
-# Gitignore settings for ESPHome
-# This is an example and may include too much for your use-case.
-# You can modify this file to suit your needs.
-/.esphome/
-/secrets.yaml
+# Whitelist
+!.gitignore
+!automations/**
+
+# Ignore
+node-red
+*.DISABLED
+*.pid
+*.xml
+*.csr
+*.crt
+*.key
+*.conf
+*.pickle
+*.db*
+*.sqlite
+*.log*
+*.db
+.cloud
+.storage
+.vscode
+.google.token
+.uuid
+core.*
+core
+home-assistant_v2
+home-assistant_v2.*
+deps
+icloud
+__pycache__
+hacs
+alexa_media
+custom_components
+image
+tts
+secrets.yaml
+secrets
+known_devices.yaml
+.homekit.state
+ipchange.yaml
+ip_bans.yaml
+production_auth.json
+OZW_Log.txt
+SERVICE_ACCOUNT.JSON
+.ssh
+www
+esphome/trash
+nest
+blueprints
+.HA_VERSION
+.shopping_list.json
+.esphome
