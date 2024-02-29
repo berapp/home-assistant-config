@@ -19,15 +19,9 @@ esphome:
           condition:
               - wifi.connected:
           then:
-            - light.turn_on: # indication of wifi connection confirmation
-                id: led_ring
-                brightness: 100%
-                red: 0%
-                green: 100%
-                blue: 0%
-            - delay: '00:00:05'
             - light.turn_off: # turns off light waiting on automation to start
                 id: led_ring
+                transition_length: 100ms
             - delay: 1s
             - voice_assistant.start_continuous:
     - priority: 300.0 # after sensor setup, before WIFI initialization 
@@ -38,15 +32,16 @@ esphome:
             red: 100%
             green: 0%
             blue: 0%
-    - priority: 225.0 # after WIFI initialization
-      then:
-        - light.turn_on: # indication that the controller is looking for a wifi connection
-            id: led_ring
-            brightness: 100%
-            red: 0%
-            green: 0%
-            blue: 100%
-        - delay: '00:00:10'
+            effect: Booting
+    # - priority: 225.0 # after WIFI initialization
+    #   then:
+    #     - light.turn_on: # indication that the controller is looking for a wifi connection
+    #         id: led_ring
+    #         brightness: 50%
+    #         red: 0%
+    #         green: 0%
+    #         blue: 100%
+    #     - delay: '00:00:10'
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -93,15 +88,15 @@ api:
             - delay: 2s
             - voice_assistant.start_continuous:
             - script.execute: reset_led
-  on_client_disconnected:
-    then:
-      - light.turn_on:
-          id: led_ring
-          blue: 0%
-          red: 100%
-          green: 100%
-          brightness: 50%
-          effect: connecting
+  # on_client_disconnected:
+  #   then:
+  #     - light.turn_on:
+  #         id: led_ring
+  #         blue: 0%
+  #         red: 100%
+  #         green: 100%
+  #         brightness: 50%
+  #         effect: connecting
 
 dashboard_import:
   package_import_url: github://esphome/firmware/voice-assistant/esp32-s3-korvo1.yaml@main
@@ -146,18 +141,18 @@ voice_assistant:
   id: voice_asst
   microphone: korvo_mic
   speaker: korvo_speaker
-  noise_suppression_level: 3
-  auto_gain: 25dBFS
-  volume_multiplier: 1
+  noise_suppression_level: 1
+  auto_gain: 15dBFS
+  volume_multiplier: 2
   use_wake_word: false
   on_listening:
     - light.turn_on:
         id: led_ring
-        blue: 100%
+        blue: 0%
         red: 0%
         green: 0%
-        brightness: 100%
-        effect: wakeword
+        brightness: 50%
+        effect: Listening
   on_tts_start:
     - light.turn_on:
         id: led_ring
@@ -182,7 +177,7 @@ voice_assistant:
               blue: 0%
               red: 100%
               green: 0%
-              brightness: 100%
+              brightness: 50%
               effect: none
           - switch.turn_on: assist_error
           - delay: 1s
@@ -200,24 +195,16 @@ script:
           condition:
             switch.is_on: use_wake_word
           then:
-            - light.turn_on:
-                id: led_ring
-                blue: 100%
-                red: 0%
-                green: 0%
-                brightness: 30%
-                effect: none
-          else:
-            - light.turn_off: led_ring
+            light.turn_off: led_ring
   - id: reset_assist
     then:
       - light.turn_on:
           id: led_ring
           blue: 0%
-          red: 30%
+          red: 100%
           green: 0%
           brightness: 25%
-          effect: none
+          effect: Pulse
       - switch.turn_off: use_wake_word
 
 switch:
@@ -291,8 +278,9 @@ light:
           name: "Pulse"
           transition_length: 0.5s
           update_interval: 0.5s
+          max_brightness: 50%
       - addressable_twinkle:
-          name: "Working"
+          name: "Booting"
           twinkle_probability: 5%
           progress_interval: 4ms
       - addressable_color_wipe:
@@ -302,21 +290,36 @@ light:
               green: 50%
               blue: 0%
               num_leds: 12
+            - red: 50%
+              green: 0%
+              blue: 50%
+              num_leds: 12
           add_led_interval: 20ms
           reverse: false
       - addressable_color_wipe:
-          name: "Connecting"
+          name: "Listening"
           colors:
-            - red: 60%
-              green: 60%
+            - red: 0%
+              green: 0%
               blue: 60%
-              num_leds: 12
+              num_leds: 3
+              gradient: true
             - red: 60%
               green: 60%
               blue: 0%
-              num_leds: 12
+              num_leds: 3
+              gradient: true
+            - red: 60%
+              green: 0%
+              blue: 0%
+              num_leds: 3
+              gradient: true
+            - red: 0%
+              green: 60%
+              blue: 0%
+              num_leds: 3
+              gradient: true
           add_led_interval: 100ms
-          reverse: true
 
 binary_sensor:
   - platform: template
