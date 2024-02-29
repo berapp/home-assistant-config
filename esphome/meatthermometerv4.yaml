@@ -1,0 +1,272 @@
+esphome:
+  name: meatthermometerv4
+  friendly_name: MeatThermometerV4
+
+esp32:
+  board: esp32dev
+  # framework:
+  #   type: arduino
+  framework:
+    type: esp-idf
+    version: recommended
+
+# Enable logging
+logger:
+  level: INFO
+  
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret meatthermometerv4-api_encryption_key
+
+ota:
+  password: !secret meatthermometerv4-ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Meatthermometerv4"
+    password: !secret meatthermometerv4-ap_password
+
+captive_portal:
+sensor:
+  - platform: ntc
+    id: ntcsensor1
+    sensor: resistance_sensor1
+    accuracy_decimals: 0
+    filters:
+    - median:
+        window_size: 2
+        send_every: 1
+    calibration:
+      # - 128000Ohm -> 22°C
+      # - 36100Ohm -> 50°C
+      # - 460Ohm -> 176°C
+      # - 317000Ohm -> 0°C
+      # - 36100Ohm -> 50°C
+      # - 6550Ohm -> 100°C
+      # b_constant: 3950
+      # b_constant: 4200
+      b_constant: 6750
+      reference_temperature: 25°C
+      reference_resistance: 100kOhm
+    name: Ambient Temperature
+    # on_value:
+    #   then:
+    #     - logger.log:
+    #         level: INFO
+    #         format: "ntcsensor1 temp = %.0f C"
+    #         args: [ 'id(ntcsensor1).state' ]
+    
+  
+  - platform: ntc
+    id: ntcsensor2
+    sensor: resistance_sensor2
+    accuracy_decimals: 0
+    filters:
+    - median:
+        window_size: 2
+        send_every: 1
+    calibration:
+      # - 117000Ohm -> 22°C
+      # - 35600Ohm -> 50°C
+      # - 6700Ohm -> 100°C
+      # - 316000Ohm -> 0°C
+      # - 35600Ohm -> 50°C
+      # - 6600Ohm -> 100°C
+      b_constant: 3950
+      reference_temperature: 25°C
+      reference_resistance: 100kOhm
+    name: Orange Temperature
+  
+  - platform: ntc
+    id: ntcsensor3
+    sensor: resistance_sensor3
+    accuracy_decimals: 0
+    filters:
+    - median:
+        window_size: 2
+        send_every: 1
+    calibration:
+      # - 117000Ohm -> 22°C
+      # - 35900Ohm -> 50°C
+      # - 6700Ohm -> 100°C
+      # - 319000Ohm -> 0°C
+      # - 35900Ohm -> 50°C
+      # - 6600Ohm -> 100°C
+      b_constant: 3950
+      reference_temperature: 25°C
+      reference_resistance: 100kOhm
+    name: Green Temperature
+  
+  - platform: ntc
+    id: ntcsensor4
+    sensor: resistance_sensor4
+    accuracy_decimals: 0
+    filters:
+    - median:
+        window_size: 2
+        send_every: 1
+    calibration:
+      # - 116000Ohm -> 22°C
+      # - 35900Ohm -> 50°C
+      # - 6700Ohm -> 100°C
+      # - 318000Ohm -> 0°C
+      # - 35900Ohm -> 50°C
+      # - 6550Ohm -> 100°C
+      b_constant: 3950
+      reference_temperature: 25°C
+      reference_resistance: 100kOhm
+    name: Blue Temperature
+
+  - platform: resistance
+    id: resistance_sensor1a
+    sensor: source_sensor1
+    accuracy_decimals: 0
+    # filters:
+    # - clamp:
+    #     max_value: 194872
+    #     min_value: 228
+    #     ignore_out_of_range: true
+    configuration: DOWNSTREAM
+    # resistor: 9700Ohm
+    # resistor: 9100Ohm
+    resistor: 100kOhm
+    name: Ambient Resistance Realtime
+    
+  - platform: resistance
+    id: resistance_sensor1
+    sensor: source_sensor1
+    accuracy_decimals: 0
+    filters:
+    # - clamp:
+    #     # max_value: 194872
+    #     min_value: 228
+    #     ignore_out_of_range: true
+    - median:
+        window_size: 50
+        send_every: 1
+    configuration: DOWNSTREAM
+    # resistor: 9700Ohm
+    # resistor: 9100Ohm
+    resistor: 100kOhm
+    name: Ambient Resistance
+    on_value:
+      then:
+        - logger.log:
+            level: INFO
+            format: "resistance_sensor1 = %.0f Ohm"
+            args: [ 'id(resistance_sensor1).state' ]
+
+  - platform: resistance
+    id: resistance_sensor2
+    sensor: source_sensor2
+    accuracy_decimals: 0
+    filters:
+    # - clamp:
+    #     # max_value: 199000
+    #     min_value: 300
+    #     ignore_out_of_range: true
+    - median:
+        window_size: 50
+        send_every: 1
+    configuration: DOWNSTREAM
+    # resistor: 9940Ohm
+    resistor: 100kOhm
+    name: Orange Resistance
+
+  - platform: resistance
+    id: resistance_sensor3
+    sensor: source_sensor3
+    accuracy_decimals: 0
+    filters:
+    # - clamp:
+    #     # max_value: 199000
+    #     min_value: 300
+        # ignore_out_of_range: true
+    - median:
+        window_size: 50
+        send_every: 1
+    configuration: DOWNSTREAM
+    # resistor: 9960Ohm
+    resistor: 100kOhm
+    name: Green Resistance
+
+  - platform: resistance
+    id: resistance_sensor4
+    sensor: source_sensor4
+    accuracy_decimals: 0
+    filters:
+    # - clamp:
+    #     # max_value: 199000
+    #     min_value: 300
+    #     ignore_out_of_range: true
+    - median:
+        window_size: 50
+        send_every: 1
+    configuration: DOWNSTREAM
+    # resistor: 9980Ohm
+    resistor: 100kOhm
+    name: Blue Resistance
+
+  - platform: adc
+    id: source_sensor1
+    pin: GPIO36
+    attenuation: auto
+
+  - platform: adc
+    id: source_sensor2
+    pin: GPIO39
+    attenuation: auto
+
+  - platform: adc
+    id: source_sensor3
+    pin: GPIO34
+    attenuation: auto
+
+  - platform: adc
+    id: source_sensor4
+    pin: GPIO35
+    attenuation: auto
+
+
+
+switch:
+  - platform: gpio
+    pin: GPIO23
+    id: ntc_vcc1
+
+  - platform: gpio
+    pin: GPIO22
+    id: ntc_vcc2
+  
+  - platform: gpio
+    pin: GPIO1
+    id: ntc_vcc3
+
+  - platform: gpio
+    pin: GPIO3
+    id: ntc_vcc4
+
+interval:
+  - interval: 1s
+    then:
+      - switch.turn_on: ntc_vcc1
+      - component.update: source_sensor1
+      - switch.turn_off: ntc_vcc1
+
+      - switch.turn_on: ntc_vcc2
+      - component.update: source_sensor2
+      - switch.turn_off: ntc_vcc2
+
+      - switch.turn_on: ntc_vcc3
+      - component.update: source_sensor3
+      - switch.turn_off: ntc_vcc3
+
+      - switch.turn_on: ntc_vcc4
+      - component.update: source_sensor4
+      - switch.turn_off: ntc_vcc4

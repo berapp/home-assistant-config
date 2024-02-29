@@ -9,6 +9,7 @@ esp32:
 
 # Enable logging
 logger:
+  level: INFO
 
 # Enable Home Assistant API
 api:
@@ -76,8 +77,7 @@ voice_assistant:
           then:
           - light.turn_on:
               id: led1
-              brightness: 100%
-              effect: blink
+              brightness: 50%
           - switch.turn_on: assist_error
           - delay: 3s
           - script.execute: reset_assist
@@ -180,17 +180,17 @@ esp32_touch:
   setup_mode: false
 binary_sensor:
   - platform: esp32_touch
-    name: "ESP32 Touch Pad GPIO4"
+    name: "Assist Error"
     pin: GPIO4
     threshold: 1000
     on_press:
-      - switch.turn_on: voice_assist_on
+      - switch.turn_on: assist_error
   - platform: esp32_touch
-    name: "ESP32 Touch Pad GPIO15"
+    name: "Stop wake word"
     pin: GPIO15
     threshold: 1000
     on_press:
-      - switch.turn_on: voice_assist_on
+      - switch.toggle: stop_wake_word
   - platform: esp32_touch
     name: "ESP32 Touch Pad GPIO13"
     pin: GPIO13

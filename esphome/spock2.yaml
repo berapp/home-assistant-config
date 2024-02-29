@@ -76,6 +76,7 @@ external_components:
 ota:
   password: !secret spock2-ota_password
 logger:
+  # level: INFO
 api:
   encryption:
     key: !secret spock2-api_encryption_key
@@ -225,7 +226,7 @@ switch:
   - platform: gpio
     id: pa_ctrl
     pin: GPIO38
-    name: "${friendly_name} Speaker Mute"
+    name: "${friendly_name} Speaker Enable"
     restore_mode: RESTORE_DEFAULT_ON
 
   - platform: template
@@ -259,7 +260,7 @@ switch:
           condition:
             switch.is_off: stop_wake_word
           then:
-          - delay: 30s
+          - delay: 15s
           - switch.turn_on: use_wake_word
   - platform: template
     name: Stop wake word
@@ -337,6 +338,13 @@ binary_sensor:
   - platform: template
     name: "${friendly_name} Mode"
     id: btn_mode
+    on_click:
+      - if:
+            condition: voice_assistant.is_running
+            then:
+              - voice_assistant.stop:
+            else:
+              - voice_assistant.start_continuous:
     on_multi_click:
       - timing:
           - ON for at least 10s
@@ -347,6 +355,7 @@ binary_sensor:
     id: btn_record
     on_press:
       - voice_assistant.start:
+          silence_detection: false
       - light.turn_on:
           id: led_ring
           brightness: 100%

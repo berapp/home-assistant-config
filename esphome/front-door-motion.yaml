@@ -39,7 +39,7 @@ external_components:
     components: [ serial ]
 # Enable logging
 logger:
-  level: WARN  #You Can Use "INFO" Level
+  level: INFO  #You Can Use "INFO" Level
   baud_rate: 0
 # Enable Home Assistant API
 api:
