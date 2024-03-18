@@ -24,6 +24,9 @@ esphome:
                 transition_length: 100ms
             - delay: 1s
             - voice_assistant.start_continuous:
+            - delay: 1800s
+            - switch.turn_on:
+                id: restart_switch
     - priority: 300.0 # after sensor setup, before WIFI initialization 
       then:
         - light.turn_on: # indication that the controller has power
@@ -151,7 +154,7 @@ voice_assistant:
         blue: 0%
         red: 0%
         green: 0%
-        brightness: 50%
+        brightness: 80%
         effect: Listening
   on_tts_start:
     - light.turn_on:
@@ -206,10 +209,11 @@ script:
           brightness: 25%
           effect: Pulse
       - switch.turn_off: use_wake_word
-
 switch:
   - platform: restart
     name: "${friendly_name} Restart"
+    id: restart_switch
+
   - platform: gpio
     id: pa_ctrl
     pin: GPIO38
@@ -247,7 +251,7 @@ switch:
           condition:
             switch.is_off: stop_wake_word
           then:
-          - delay: 15s
+          - delay: 10s
           - switch.turn_on: use_wake_word
   - platform: template
     name: Stop wake word
@@ -369,6 +373,8 @@ binary_sensor:
           id: led_ring
 
 sensor:
+  - platform: uptime
+    name: Uptime Sensor
   - id: button_adc
     platform: adc
     internal: true

@@ -9,7 +9,7 @@ esp32:
 
 # Enable logging
 logger:
-  level: INFO
+  level: DEBUG
 
 # Enable Home Assistant API
 api:
@@ -215,3 +215,7 @@ binary_sensor:
     threshold: 1000
     on_press:
       - switch.turn_on: voice_assist_on
+
+sensor:
+  - platform: uptime
+    name: Uptime Sensor
