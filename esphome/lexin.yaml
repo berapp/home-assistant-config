@@ -300,11 +300,6 @@ light:
               blue: 0%
               num_leds: 3
               gradient: true
-            - red: 60%
-              green: 0%
-              blue: 0%
-              num_leds: 3
-              gradient: true
             - red: 0%
               green: 60%
               blue: 0%
