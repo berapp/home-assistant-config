@@ -1,0 +1,44 @@
+esphome:
+  name: magicroom
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  password: ""
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Magicroom Fallback Hotspot"
+    password: !secret magicroom-ap_password
+
+captive_portal:
+output:
+- platform: esp8266_pwm
+  id: my_led
+  pin: GPIO15
+
+light: 
+- platform: monochromatic
+  name: "Alarm led"
+  output: my_led
+
+binary_sensor:
+  - platform: gpio
+    name: "Magic Room Door"
+    device_class: door
+    pin:
+      number: 14
+      # inverted: true
+      mode: INPUT_PULLUP

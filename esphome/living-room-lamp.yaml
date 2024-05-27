@@ -1,0 +1,16 @@
+substitutions:
+  name: "extra-bulb"
+  friendly_name: "Extra Bulb"
+packages:
+  Kauf.RGBWW: github://KaufHA/kauf-rgbww-bulbs/kauf-bulb.yaml
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+api:
+  encryption:
+    key: !secret extra-bulb-api_encryption_key
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

@@ -1,6 +1,6 @@
 esphome:
-  name: kitchen-motion
-  friendly_name: Kitchen Motion
+  name: master-bathroom-motion-32
+  friendly_name: master-bathroom-motion-32
 
 esp32:
   board: esp32dev
@@ -14,10 +14,10 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: !secret kitchen-motion-api_encryption_key
+    key: !secret master-bathroom-motion-32-api_encryption_key
 
 ota:
-  password: !secret kitchen-motion-ota_password
+  password: !secret master-bathroom-motion-32-ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -25,8 +25,8 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Kitchen-Motion Fallback Hotspot"
-    password: !secret kitchen-motion-ap_password
+    ssid: "Master-Bathroom-Motion-32"
+    password: !secret master-bathroom-motion-32-ap_password
 
 captive_portal:
 uart:
@@ -39,19 +39,6 @@ uart:
 
 ld2410:
 
-
-# sensor:
-#   - platform: ld2410
-#     moving_distance:
-#       name : Moving Distance
-#     still_distance:
-#       name: Still Distance
-#     moving_energy:
-#       name: Move Energy
-#     still_energy:
-#       name: Still Energy
-#     detection_distance:
-#       name: Detection Distance
 binary_sensor:
   - platform: ld2410
     has_target:

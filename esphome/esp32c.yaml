@@ -1,22 +1,24 @@
 esphome:
-  name: dining-room-motion
-  friendly_name: Dining Room Motion
+  name: esp32c
+  friendly_name: esp32c
 
-esp8266:
-  board: esp01_1m
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
 
 # Enable logging
 logger:
-  baud_rate: 0
-  level: INFO
+  level:
+    DEBUG
 
 # Enable Home Assistant API
 api:
   encryption:
-    key: !secret dining-room-motion-api_encryption_key
+    key: !secret esp32c-api_encryption_key
 
 ota:
-  password: !secret dining-room-motion-ota_password
+  password: !secret esp32c-ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -24,13 +26,13 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Dining-Room-Motion"
-    password: !secret dining-room-motion-ap_password
+    ssid: "Esp32C Fallback Hotspot"
+    password: !secret esp32c-ap_password
 
 captive_portal:
 uart:
-  rx_pin: GPIO3  #ESP8266 UART_0
-  tx_pin: GPIO1  #ESP8266 UART_0
+  rx_pin: GPIO16
+  tx_pin: GPIO17
   baud_rate: 256000
   parity: NONE
   stop_bits: 1
@@ -38,19 +40,6 @@ uart:
 
 ld2410:
 
-
-# sensor:
-#   - platform: ld2410
-#     moving_distance:
-#       name : Moving Distance
-#     still_distance:
-#       name: Still Distance
-#     moving_energy:
-#       name: Move Energy
-#     still_energy:
-#       name: Still Energy
-#     detection_distance:
-#       name: Detection Distance
 binary_sensor:
   - platform: ld2410
     has_target:
@@ -62,32 +51,7 @@ binary_sensor:
 status_led:
   pin:
     number: GPIO2 #ESP8266 OnBroad LED
-    inverted: true
 
-#sensor:
-#  - platform: ld2410
-#    moving_distance:
-#      name : Moving Distance
-#    still_distance:
-#      name: Still Distance
-#    moving_energy:
-#      name: Move Energy
-#    still_energy:
-#      name: Still Energy
-#    detection_distance:
-#      name: Detection Distance
-# binary_sensor:
-#   - platform: ld2410
-#     has_target:
-#       name: Presence
-#     has_moving_target:
-#       name: Moving Target
-#     has_still_target:
-#       name: Still Target
-# status_led:
-#   pin:
-#     number: GPIO2 #ESP8266 OnBroad LED
-#     inverted: False
     
 switch:
   - platform: template

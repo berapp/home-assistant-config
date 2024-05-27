@@ -11,6 +11,8 @@ api:
 
 logger:
   level: INFO
+  logs:
+    api: INFO
   
 wifi:
   ssid: !secret wifi_ssid
