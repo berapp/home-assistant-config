@@ -1,0 +1,508 @@
+- id: '1683235174368'
+  name: TV Time
+  entities:
+    light.hall_light:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      friendly_name: Hall Light
+      supported_features: 0
+      state: 'off'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    light.living_room_light_2:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      state: 'off'
+    light.bar_light_switch_0:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      friendly_name: Bar Light
+      supported_features: 0
+      state: 'on'
+    light.kitchen_light_2:
+      supported_color_modes:
+      - brightness
+      color_mode:
+      brightness:
+      friendly_name: Kitchen Light
+      supported_features: 32
+      state: 'off'
+    light.living_room_lamp:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: rgb
+      brightness: 166
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 240
+      - 100
+      rgb_color:
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.136
+      - 0.04
+      friendly_name: Living Room Lamp
+      supported_features: 40
+      state: 'on'
+    light.kauf_rgb_sw_big_light:
+      supported_color_modes:
+      - rgb
+      color_mode: rgb
+      brightness: 191
+      hs_color:
+      - 240
+      - 100
+      rgb_color:
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.136
+      - 0.04
+      friendly_name: Kauf RGB Sw Big Light
+      supported_features: 40
+      state: 'on'
+  icon: mdi:television
+  metadata:
+    light.hall_light:
+      entity_only: true
+    light.dining_room_light:
+      entity_only: true
+    light.living_room_light_2:
+      entity_only: true
+    light.bar_light_switch_0:
+      entity_only: true
+    light.kitchen_light_2:
+      entity_only: true
+    light.living_room_lamp:
+      entity_only: true
+    light.kauf_rgb_sw_big_light:
+      entity_only: true
+- id: '1684894799588'
+  name: Lights on at sunset2
+  entities:
+    light.living_room_light:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Ocean
+      - Romance
+      - Sunset
+      - Party
+      - Fireplace
+      - Cozy
+      - Forest
+      - Pastel Colors
+      - Wake up
+      - Bedtime
+      - Warm White
+      - Daylight
+      - Cool white
+      - Night light
+      - Focus
+      - Relax
+      - True colors
+      - TV time
+      - Plantgrowth
+      - Spring
+      - Summer
+      - Fall
+      - Deepdive
+      - Jungle
+      - Mojito
+      - Club
+      - Christmas
+      - Halloween
+      - Candlelight
+      - Golden white
+      - Pulse
+      - Steampunk
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbww
+      friendly_name: Living Room Light
+      supported_features: 4
+      color_mode: brightness
+      brightness: 255
+      effect: Sunset
+      state: 'on'
+    switch.shellyswitch25_3494547a9809_channel_1:
+      friendly_name: Kitchen Light
+      state: 'on'
+    switch.shelly1_e8db84ac4cbe:
+      friendly_name: Hall Light
+      state: 'on'
+  icon: mdi:weather-sunset
+  metadata:
+    switch.shellyswitch25_3494547a9809_channel_1:
+      entity_only: true
+    switch.shelly1_e8db84ac4cbe:
+      entity_only: true
+- id: '1685112800861'
+  name: Entryway light on at dusk
+  entities:
+    switch.shellyplus1_441793cd1b8c_switch_0:
+      friendly_name: Entryway Light
+      state: 'on'
+  icon: mdi:weather-sunset-down
+  metadata:
+    switch.shellyplus1_441793cd1b8c_switch_0:
+      entity_only: true
+- id: '1709811247604'
+  name: Main lights on
+  entities:
+    light.kitchen_light_2:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 255
+      friendly_name: Kitchen Light
+      supported_features: 32
+      state: 'on'
+    light.living_room_lamp:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 4000
+      color_temp: 250
+      hs_color:
+      - 26.812
+      - 34.87
+      rgb_color:
+      - 255
+      - 205
+      - 166
+      xy_color:
+      - 0.421
+      - 0.364
+      friendly_name: Living Room Lamp
+      supported_features: 40
+      state: 'on'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.dining_room_light:
+      entity_only: true
+- id: '1709875894755'
+  name: Main lights off
+  entities:
+    light.kitchen_light_2:
+      supported_color_modes:
+      - brightness
+      color_mode:
+      brightness:
+      friendly_name: Kitchen Light
+      supported_features: 32
+      state: 'off'
+    light.living_room_lamp:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      friendly_name: Living Room Lamp
+      supported_features: 40
+      state: 'off'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    light.living_room_light_2:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      state: 'off'
+  metadata:
+    light.dining_room_light:
+      entity_only: true
+    light.living_room_light_2:
+      entity_only: true
+- id: '1710363412510'
+  name: work lighting
+  entities:
+    light.living_room_lamp:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 6667
+      color_temp: 149
+      hs_color:
+      - 300
+      - 2.095
+      rgb_color:
+      - 255
+      - 249
+      - 255
+      xy_color:
+      - 0.325
+      - 0.322
+      friendly_name: Living Room Lamp
+      supported_features: 40
+      state: 'on'
+    light.living_room_light_2:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.living_room_light_2:
+      entity_only: true
+- id: '1712291886354'
+  name: 'Bedtime '
+  entities:
+    light.living_room_light_2:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      state: 'off'
+    fan.living_room_fan:
+      icon: mdi:ceiling-fan
+      friendly_name: Living Room Fan
+      supported_features: 0
+      state: 'off'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    switch.dining_room_ceiling_fan_channel_2:
+      icon: mdi:ceiling-fan
+      friendly_name: Dining Room Ceiling Fan
+      state: 'off'
+    light.kitchen_light_2:
+      supported_color_modes:
+      - brightness
+      color_mode:
+      brightness:
+      friendly_name: Kitchen Light
+      supported_features: 32
+      state: 'off'
+    light.living_room_lamp:
+      min_color_temp_kelvin: 2800
+      max_color_temp_kelvin: 6600
+      min_mireds: 151
+      max_mireds: 357
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      friendly_name: Living Room Lamp
+      supported_features: 40
+      state: 'off'
+    light.bar_light_switch_0:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      friendly_name: Bar Light
+      supported_features: 0
+      state: 'off'
+    media_player.living_room_tv:
+      friendly_name: Living Room TV
+      supported_features: 152461
+      state: 'off'
+    light.kauf_bulb:
+      min_color_temp_kelvin: 2800
+      max_color_temp_kelvin: 6600
+      min_mireds: 151
+      max_mireds: 357
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: rgb
+      brightness: 76
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 218.906
+      - 50.196
+      rgb_color:
+      - 127
+      - 172
+      - 255
+      xy_color:
+      - 0.208
+      - 0.217
+      friendly_name: Master bedroom light
+      supported_features: 40
+      state: 'on'
+  metadata: {}
+- id: '1712374997389'
+  name: Morning
+  entities:
+    light.living_room_light_2:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      state: 'off'
+    fan.living_room_fan:
+      icon: mdi:ceiling-fan
+      friendly_name: Living Room Fan
+      supported_features: 0
+      state: 'on'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      icon: mdi:ceiling-fan-light
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    switch.dining_room_ceiling_fan_channel_2:
+      icon: mdi:ceiling-fan
+      friendly_name: Dining Room Ceiling Fan
+      state: 'on'
+    light.kauf_bulb:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2857
+      color_temp: 350
+      hs_color:
+      - 28.077
+      - 60.925
+      rgb_color:
+      - 255
+      - 172
+      - 99
+      xy_color:
+      - 0.51
+      - 0.386
+      friendly_name: Master bedroom light
+      supported_features: 40
+      state: 'on'
+  metadata: {}
+- id: '1712971581381'
+  name: ALARM
+  entities:
+    light.living_room_lamp:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: rgb
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 0.98
+      - 96.078
+      rgb_color:
+      - 255
+      - 14
+      - 10
+      xy_color:
+      - 0.696
+      - 0.3
+      friendly_name: Living Room Lamp
+      supported_features: 40
+      state: 'on'
+    light.kauf_bulb:
+      min_color_temp_kelvin: 2857
+      max_color_temp_kelvin: 6667
+      min_mireds: 149
+      max_mireds: 350
+      supported_color_modes:
+      - color_temp
+      - rgb
+      color_mode: rgb
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 2.963
+      - 95.294
+      rgb_color:
+      - 255
+      - 24
+      - 12
+      xy_color:
+      - 0.694
+      - 0.302
+      friendly_name: Master bedroom light
+      supported_features: 40
+      state: 'on'
+  metadata: {}

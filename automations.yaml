@@ -1,0 +1,1234 @@
+- id: '1683120433001'
+  alias: Turn on Entryway light when anyone gets home
+  description: ''
+  trigger:
+  - platform: zone
+    entity_id: person.robert_rapp
+    zone: zone.home
+    event: enter
+  - platform: zone
+    entity_id: person.steph_rapp
+    zone: zone.home
+    event: enter
+  condition:
+  - condition: sun
+    after: sunset
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      device_id: 868ebf898e9ff2f0bef0e829b48ae85a
+  mode: single
+- id: '1683131487116'
+  alias: Dad left home
+  description: ''
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      person_entity: person.robert_rapp
+      zone_entity: zone.home
+      notify_device: 07bd19b5c047b104b5d27150ea115e25
+- id: '1683131572695'
+  alias: Turn off lights at sunrise
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunrise
+    offset: 00:30:00
+  - platform: time
+    at: 01:00:00
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      area_id:
+      - entryway
+      - dining_room
+      - kitchen
+      - living_room
+      - hallway
+  mode: single
+- id: '1684895696934'
+  alias: Lights on at sunset 3
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: 2.8
+  condition: []
+  action:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.lights_on_at_sunset
+    metadata: {}
+  - service: scene.turn_on
+    target:
+      entity_id: scene.entryway_light_on_at_dusk
+    metadata: {}
+  mode: single
+- id: '1687468897387'
+  alias: Front door open
+  description: ''
+  trigger:
+  - type: opened
+    platform: device
+    device_id: 0771de29a79fadf81a9e41ebe386fc92
+    entity_id: binary_sensor.front_door_door
+    domain: binary_sensor
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Front+door+open.&language=en-us&voice=en-us-lessac-low
+      media_content_type: provider
+    metadata:
+      title: Front door open.
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Front+door+open.&language=en-us&voice=en-us-lessac-low
+  mode: single
+- id: '1687468964471'
+  alias: Front door closed
+  description: ''
+  trigger:
+  - type: not_opened
+    platform: device
+    device_id: 0771de29a79fadf81a9e41ebe386fc92
+    entity_id: binary_sensor.front_door_door
+    domain: binary_sensor
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Front+door+closed.&language=en-us&voice=en-us-lessac-low
+      media_content_type: provider
+    metadata:
+      title: Front door closed.
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Front+door+closed.&language=en-us&voice=en-us-lessac-low
+  mode: single
+- id: '1687472637792'
+  alias: Steph headed home
+  description: ''
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      person_entity: person.steph_rapp
+      zone_entity: zone.dance
+      notify_device: 9ef727639d081a854bbe40b7a5336488
+- id: '1688077923404'
+  alias: Moms home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: bc9e0a1c5548a55e047b1af737286ab5
+    domain: device_tracker
+    entity_id: device_tracker.pixel_6_pro
+    type: enters
+    zone: zone.home
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  action:
+  - service: notify.mobile_app_pixel_7a
+    data:
+      message: Mom is home
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Mom+is+home.&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Mom is home.
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Mom+is+home.&language=en_US&voice=en_US-amy-low
+  mode: single
+- id: '1688079262253'
+  alias: Dad is home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 07bd19b5c047b104b5d27150ea115e25
+    domain: device_tracker
+    entity_id: af9990c0cecb9f42f816f5e92f55f19d
+    type: enters
+    zone: zone.home
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Dad+is+home.&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Dad is home.
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Dad+is+home.&language=en_US&voice=en_US-amy-low
+  - service: notify.mobile_app_pixel_7a
+    data:
+      message: Dad is home
+  - service: notify.mobile_app_pixel_6_pro
+    data:
+      message: Dad is home
+  mode: single
+- id: '1688360123591'
+  alias: Turn off portable AC
+  description: ''
+  trigger:
+  - type: temperature
+    platform: device
+    device_id: 961dea202cd3997632cb03589c870ace
+    entity_id: sensor.living_room_temperature
+    domain: sensor
+    below: 78
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 78
+    target:
+      device_id: cf9f5b8c154ffdd77935b918cd6d01a8
+  mode: single
+- id: '1688781337890'
+  alias: Turn off sleep mode
+  description: ''
+  trigger:
+  - platform: time
+    at: 06:00:00
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.sleep_mode
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.bathroom2motion_stay_off
+      - switch.master_bath_motion_stay_off
+    data: {}
+  mode: single
+- id: '1689217497552'
+  alias: Turn on AC 2
+  description: ''
+  trigger:
+  - type: temperature
+    platform: device
+    device_id: 961dea202cd3997632cb03589c870ace
+    entity_id: sensor.living_room_temperature
+    domain: sensor
+    above: 77
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 63
+    target:
+      device_id: cf9f5b8c154ffdd77935b918cd6d01a8
+  mode: single
+- id: '1689286377604'
+  alias: Purge noisy power sensors
+  description: ''
+  trigger:
+  - platform: time
+    at: 02:00:00
+  - platform: time
+    at: 03:00:00
+  - platform: time
+    at: 05:00:00
+  - platform: time
+    at: 08:00:00
+  - platform: time
+    at: '11:00:00'
+  - platform: time
+    at: '13:00:00'
+  - platform: time
+    at: '17:00:00'
+  action:
+  - service: recorder.purge_entities
+    data: {}
+  mode: single
+- id: '1689908310648'
+  alias: tv time
+  description: ''
+  trigger:
+  - platform: conversation
+    command: it's tv time
+  condition: []
+  action:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.tv_time
+    metadata: {}
+  mode: single
+- id: '1698264391261'
+  alias: Alarm Armed
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_3
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_1
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_4
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_5
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_2
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door_door
+    to: 'on'
+  condition:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: alarm_control_panel.home_alarm
+      state: armed_home
+    - condition: state
+      entity_id: alarm_control_panel.home_alarm
+      state: armed_away
+  action:
+  - service: alarm_control_panel.alarm_trigger
+    data: {}
+    target:
+      entity_id: alarm_control_panel.home_alarm
+  - service: cast.show_lovelace_view
+    data:
+      entity_id: media_player.living_room_tv
+      dashboard_path: /alarm-panel/0
+  mode: single
+- id: '1698266135893'
+  alias: Alarm Unarmed - Door Chime
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_3
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_1
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_4
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_5
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.zone_2
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door_door
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.home_alarm
+    state: disarmed
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://media_source/local/hand-bells-a-single.wav
+      media_content_type: audio/x-wav
+    metadata:
+      title: hand-bells-a-single.wav
+      thumbnail:
+      media_class: music
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://media_source
+  mode: single
+- id: '1698266835393'
+  alias: Alarm Siren
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - alarm_control_panel.home_alarm
+    to: triggered
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness: 255
+      flash: long
+    target:
+      device_id: 731af499661215eb47a3f4225a7efa1b
+  mode: single
+- id: '1698274470583'
+  alias: Bathroom Light On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bathroom2motion_presence
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.esp32c_presence
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: switch.bathroom2motion_stay_off
+    state: 'off'
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      device_id: aaf01ca7ccd6b3a70e45f59fa659e645
+  mode: single
+- id: '1698274733631'
+  alias: Bathroom Light Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bathroom2motion_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.esp32c_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: switch.bathroom2motion_stay_on
+    state: 'off'
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: aaf01ca7ccd6b3a70e45f59fa659e645
+  mode: single
+- id: '1698277543874'
+  alias: Master Bath Lights On Day
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bath_motion_presence
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion_32_presence
+    to: 'on'
+  condition:
+  - condition: and
+    conditions:
+    - condition: time
+      after: 06:00:00
+      before: '23:00:00'
+      weekday:
+      - sat
+      - fri
+      - thu
+      - wed
+      - tue
+      - mon
+      - sun
+    - condition: state
+      entity_id: switch.master_bath_motion_stay_off
+      state: 'off'
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.kitchen_light
+      - light.lanai_light
+      - light.master_bathroom_mirror_light
+  mode: single
+- id: '1698277645986'
+  alias: Master Bath Lights Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bath_motion_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion_32_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
+  condition:
+  - condition: state
+    state: 'off'
+    entity_id: switch.master_bath_motion_stay_on
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.kitchen_light
+      - light.lanai_light
+      - light.shellydimmer2_c45bbe791de0
+      - light.master_bathroom_mirror_light
+  mode: single
+- id: '1698277762507'
+  alias: Master Bath Light On Night
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bath_motion_presence
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion_32_presence
+    to: 'on'
+  condition:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: switch.master_bath_motion_stay_off
+      state: 'off'
+    - condition: time
+      after: '23:00:00'
+      before: 06:00:00
+      weekday:
+      - sat
+      - fri
+      - thu
+      - wed
+      - tue
+      - mon
+      - sun
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.kitchen_light
+  mode: single
+- id: '1698794761995'
+  alias: flicker livingroom
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - repeat:
+      count: 100000
+      sequence:
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 250
+      - service: light.toggle
+        data: {}
+        target:
+          area_id:
+          - bathroom_2
+          - dining_room
+          - entryway
+          - hallway
+          - master_bathroom
+          - living_room
+          - kitchen
+          - master_bedroom
+  mode: single
+- id: '1699152186168'
+  alias: movies
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Let's go to the movies
+  condition: []
+  action:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.tv_time
+    metadata: {}
+  mode: single
+- id: '1699296133483'
+  alias: livingroom 74
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Set the living room temperature to 74
+    - Set the living room temperature at 74
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 74
+      hvac_mode: cool
+    target:
+      device_id: 961dea202cd3997632cb03589c870ace
+  mode: single
+- id: '1699296448692'
+  alias: living room 72
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Set the living room temperature to 72
+    - Set the living room temperature at 72
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 72
+      hvac_mode: cool
+    target:
+      device_id: 961dea202cd3997632cb03589c870ace
+  mode: single
+- id: '1699296481504'
+  alias: living room 70
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Set the living room temperature to 70
+    - Set the living room temperature at 70
+  - platform: device
+    device_id: 276688e9e311510af287b4c1d53d2b57
+    domain: bthome
+    type: button
+    subtype: long_press
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 70
+      hvac_mode: cool
+    target:
+      device_id: 961dea202cd3997632cb03589c870ace
+  mode: single
+- id: '1699296510999'
+  alias: living room 76
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Set the living room temperature to 76
+    - Set the living room temperature at 76
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 76
+      hvac_mode: cool
+    target:
+      device_id: 961dea202cd3997632cb03589c870ace
+  mode: single
+- id: '1699297611969'
+  alias: turn off living room tv
+  description: ''
+  trigger:
+  - platform: conversation
+    command: turn off the living room TV
+  condition: []
+  action:
+  - type: turn_off
+    device_id: c86fd01f2ade54fa3da7d5facfa57c57
+    entity_id: 856f2645729e50345ff1871acdebd78f
+    domain: remote
+  - type: turn_off
+    device_id: 1117bd9386afbfbbc8b0db36f9f7db26
+    entity_id: 2faee64eef9b51c55db397dc2ee8f9ed
+    domain: switch
+  mode: single
+- id: '1703201437675'
+  alias: Dad left work
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 07bd19b5c047b104b5d27150ea115e25
+    domain: device_tracker
+    entity_id: af9990c0cecb9f42f816f5e92f55f19d
+    type: leaves
+    zone: zone.bert_work
+  condition: []
+  action:
+  - service: notify.mobile_app_pixel_6_pro
+    data:
+      message: Dad left work
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Dad+left+work&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Dad left work
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Dad+left+work&language=en_US&voice=en_US-amy-low
+  mode: single
+- id: '1703905966088'
+  alias: Night mode medium
+  description: ''
+  trigger:
+  - platform: time
+    at: 01:00:00
+  condition: []
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.bathroom2motion_stay_off
+    data: {}
+  mode: single
+- id: '1705535746064'
+  alias: Meat Thermometer Automation
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states(''sensor.meatthermometer_ntc_temperature'') | int >=
+      states(''number.meatthermometer_target_temperature'') | int }}'
+  condition:
+  - condition: state
+    entity_id: switch.meatthermometer_alarm
+    state: 'on'
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Food+is+done&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Food is done
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Food+is+done&language=en_US&voice=en_US-amy-low
+  - service: notify.mobile_app_pixel_7a
+    metadata: {}
+    data:
+      message: Food is done
+  - service: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 0
+      - 255
+      - 0
+      effect: Fast Pulse
+    target:
+      entity_id: light.meatthermometer_rgb_led
+  mode: single
+- id: '1709189888503'
+  alias: Kitchen light at night
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: fa6e504f980a5db06f47bbb2f9a4d884
+    entity_id: 1f58ebdf0b35ae08b43fdbb84ed34c4e
+    domain: light
+  condition:
+  - condition: time
+    after: 01:00:00
+    before: 06:00:00
+  action:
+  - service: light.turn_on
+    target:
+      entity_id: light.kitchen_light_2
+    data:
+      brightness_pct: 30
+  mode: single
+- id: '1709190547323'
+  alias: Kitchen light day
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: fa6e504f980a5db06f47bbb2f9a4d884
+    entity_id: 1f58ebdf0b35ae08b43fdbb84ed34c4e
+    domain: light
+  condition:
+  - condition: not
+    conditions:
+    - condition: time
+      after: 01:00:00
+      before: 06:00:00
+  action:
+  - service: light.turn_on
+    target:
+      entity_id: light.kitchen_light_2
+    data:
+      brightness_pct: 100
+  mode: single
+- id: '1710006812524'
+  alias: mute living room tv
+  description: ''
+  trigger:
+  - platform: conversation
+    command: mute the living room tv
+  condition: []
+  action:
+  - service: switch.toggle
+    target:
+      entity_id: switch.livingroom_soundbar_mute
+    data: {}
+  mode: single
+- id: '1710176855669'
+  alias: Bert phone ringing
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.pixel_7a_phone_state
+    to: ringing
+  condition: []
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.lanai_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+      media_content_type: provider
+    metadata:
+      title: Berts phone is ringing
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.garage_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+      media_content_type: provider
+    metadata:
+      title: Berts phone is ringing
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+      media_content_type: provider
+    metadata:
+      title: Berts phone is ringing
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+      media_content_type: provider
+    metadata:
+      title: Berts phone is ringing
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Berts+phone+is+ringing&language=en_US&voice=en_US-danny-low
+  mode: single
+- id: '1710363465535'
+  alias: I need work lighting
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - work lighting
+  condition: []
+  action:
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.work_lighting
+  mode: single
+- id: '1710363612328'
+  alias: Start Youtube
+  description: ''
+  trigger:
+  - platform: conversation
+    command: start youtube
+  condition: []
+  action:
+  - service: remote.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: remote.roku_ultra
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - device_id: c86fd01f2ade54fa3da7d5facfa57c57
+    domain: select
+    entity_id: f0edb90dc4f1fd3b9aede40a68cbdaf7
+    type: select_option
+    option: YouTube
+  mode: single
+- id: '1710958519416'
+  alias: BT Main lights off
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 276688e9e311510af287b4c1d53d2b57
+    domain: bthome
+    type: button
+    subtype: press
+  - type: turned_on
+    platform: device
+    device_id: 731af499661215eb47a3f4225a7efa1b
+    entity_id: df98d0c2e249240f652d240ec72c9193
+    domain: binary_sensor
+  - type: turned_on
+    platform: device
+    device_id: 82a60fff4262cd7b096a087fe6d16461
+    entity_id: f42eb3ae18c5f05b2b3ab3ba159b5ba9
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.main_lights_off
+  mode: single
+- id: '1710958592214'
+  alias: BT Main lights on
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 276688e9e311510af287b4c1d53d2b57
+    domain: bthome
+    type: button
+    subtype: double_press
+  - type: turned_on
+    platform: device
+    device_id: 731af499661215eb47a3f4225a7efa1b
+    entity_id: ad69d2880e1c65ad8f9a0fe16de6c0c3
+    domain: binary_sensor
+  - type: turned_on
+    platform: device
+    device_id: 82a60fff4262cd7b096a087fe6d16461
+    entity_id: 51c6b0e47bb20c165c9f9c2955eb5cc3
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.main_lights_on
+  mode: single
+- id: '1710958716707'
+  alias: BT Toggle Living Room Light
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 276688e9e311510af287b4c1d53d2b57
+    domain: bthome
+    type: button
+    subtype: triple_press
+  condition: []
+  action:
+  - service: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.living_room_light_2
+  mode: single
+- id: '1712375126559'
+  alias: Morning scene activate
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:00:00
+  condition: []
+  action:
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.morning
+  mode: single
+- id: '1712951136519'
+  alias: Bedtime
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - '[it''s] bedtime'
+  - platform: conversation
+    command:
+    - bedtime
+    enabled: false
+  condition: []
+  action:
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.bed_time
+  - service: automation.trigger
+    target:
+      entity_id: automation.turn_off_living_room_tv
+    data:
+      skip_condition: true
+  mode: single
+- id: '1712970456537'
+  alias: Something on roof
+  description: ''
+  trigger:
+  - type: occupied
+    platform: device
+    device_id: d389d34dc75796a71b40a25fcfd8f251
+    entity_id: 64d57deea551fc62e99ad358fe254493
+    domain: binary_sensor
+  - type: motion
+    platform: device
+    device_id: d389d34dc75796a71b40a25fcfd8f251
+    entity_id: fda5722f8e07ef022b5051aa92506db8
+    domain: binary_sensor
+  - type: occupied
+    platform: device
+    device_id: d389d34dc75796a71b40a25fcfd8f251
+    entity_id: c6a249afc3fdf04814abc7ae2198d2db
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: notify.mobile_app_pixel_7a
+    data:
+      message: Something on roof
+  - service: notify.mobile_app_pixel_6_pro
+    data:
+      message: Something on roof
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.alarm
+  mode: single
+- id: '1713280688327'
+  alias: Turn on Hall Light
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.shelly1_e8db84ac4cbe_input
+    to: 'on'
+  condition: []
+  action:
+  - type: turn_on
+    device_id: e91e27cc6c293a04b76f172788ddafed
+    entity_id: e9f63433c14b8c80395a9e4442ac283c
+    domain: light
+  mode: single
+- id: '1713280738451'
+  alias: Turn off Hall Light
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.shelly1_e8db84ac4cbe_input
+    to: 'off'
+  condition: []
+  action:
+  - type: turn_off
+    device_id: e91e27cc6c293a04b76f172788ddafed
+    entity_id: e9f63433c14b8c80395a9e4442ac283c
+    domain: light
+  mode: single
+- id: '1715727940601'
+  alias: Toggle Master Bedroom Light
+  description: ''
+  trigger:
+  - type: turned_on
+    platform: device
+    device_id: 731af499661215eb47a3f4225a7efa1b
+    entity_id: 50ea67a2c938c0658a0eb77c392433be
+    domain: binary_sensor
+  condition: []
+  action:
+  - type: toggle
+    device_id: 7ceb340e3f3f70d0c9d1957b484a2ea6
+    entity_id: de33237ef6b5a0ba67a54da3f93fa80e
+    domain: light
+  mode: single
+- id: '1716757545123'
+  alias: Magic Room Door Open
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.magic_room_door
+    to: 'on'
+  condition: []
+  action:
+  - type: turn_on
+    device_id: c86910755a8b97ad1a4fafe1b860892f
+    entity_id: f31b9b15b9e6e060d7d0f90de45b68f5
+    domain: light
+    flash: short
+  mode: single
+- id: '1716757612111'
+  alias: Magic Room Door Closed
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.magic_room_door
+    to: 'off'
+  condition: []
+  action:
+  - type: turn_off
+    device_id: c86910755a8b97ad1a4fafe1b860892f
+    entity_id: f31b9b15b9e6e060d7d0f90de45b68f5
+    domain: light
+  mode: single
+- id: '1716766309312'
+  alias: Magic Room Door Alarm
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.magic_room_door
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition: []
+  action:
+  - repeat:
+      sequence:
+      - service: media_player.play_media
+        target:
+          entity_id: media_player.kitchen_speaker
+        data:
+          media_content_id: media-source://media_source/local/PXL_20230916_1604533273.mp3
+          media_content_type: audio/mpeg
+        metadata:
+          title: PXL_20230916_1604533273.mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 20
+          milliseconds: 0
+      while:
+      - type: is_open
+        condition: device
+        device_id: c86910755a8b97ad1a4fafe1b860892f
+        entity_id: f437eaeb22d345decb716f29883d28a0
+        domain: binary_sensor
+  mode: single

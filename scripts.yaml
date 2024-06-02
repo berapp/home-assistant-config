@@ -1,0 +1,33 @@
+update_front_doorbell_picture:
+  alias: Update Front Doorbell picture
+  sequence:
+  - service: blink.trigger_camera
+    data: {}
+    target:
+      entity_id: camera.blink_front_door_bell
+  mode: single
+  icon: mdi:camera
+update_driveway_picture:
+  alias: Update Driveway picture
+  sequence:
+  - service: blink.trigger_camera
+    data: {}
+    target:
+      entity_id: camera.blink_blank_driveway
+  mode: single
+  icon: mdi:camera
+'1689968841791':
+  alias: Blink Snap Picture
+  sequence:
+  - service: blink.trigger_camera
+    target:
+      entity_id: camera.blink_my_camera
+    data: {}
+  - delay: 00:00:05
+  - service: blink.blink_update
+    data: {}
+  - service: camera.snapshot
+    target:
+      entity_id: camera.blink_blank_driveway
+    data:
+      filename: /tmp/my_image.jpg

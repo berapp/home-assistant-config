@@ -1,0 +1,72 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Text to speech
+# tts:
+#   - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+
+# Example configuration.yaml entry
+# google_assistant:
+#   project_id: smart-home-57613
+#   service_account: !include SERVICE_ACCOUNT.JSON
+#   report_state: true
+#   exposed_domains:
+#     - switch
+#     - light
+#   entity_config:
+#     switch.kitchen:
+#       name: CUSTOM_NAME_FOR_GOOGLE_ASSISTANT
+#       aliases:
+#         - BRIGHT_LIGHTS
+#         - ENTRY_LIGHTS
+#     light.living_room:
+#       expose: false
+#       room: LIVING_ROOM
+# Example configuration.yaml entry
+# device_tracker:
+#   - platform: bluetooth_tracker
+    # request_rssi: true
+
+# Example configuration.yaml entry
+# device_tracker:
+#   - platform: bluetooth_le_tracker
+#     interval_seconds: 10
+#     consider_home: 180
+#     new_device_defaults:
+#       track_new_devices: true
+# #  - platform: bluetooth_tracker
+# # Example configuration.yaml entry
+# bluetooth:
+alarm_control_panel:
+  - platform: manual
+    name: Home Alarm
+    code: !secret alarm_code
+    arming_time: 30
+    delay_time: 30
+    trigger_time: 4
+    disarm_after_trigger: false
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      arming_time: 0
+      delay_time: 0
+# detectors:
+#   coral_pci:
+#     type: edgetpu
+#     device: pci:0
+#coral:
+#  device_path: /dev/apex_0
+# assist_pipeline:
+#   debug_recording_dir: /share/assist_pipeline
