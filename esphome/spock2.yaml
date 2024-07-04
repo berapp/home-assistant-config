@@ -82,16 +82,15 @@ logger:
 api:
   encryption:
     key: !secret spock2-api_encryption_key
+
   on_client_connected:
-    then:
+        then:
           - delay: 50ms
           - light.turn_off: led_ring
-          - voice_assistant.stop:
           - micro_wake_word.start:
   on_client_disconnected:
         then:
-          - micro_wake_word.stop:
-          - voice_assistant.stop: 
+          - voice_assistant.stop:
       # - if:
           # condition:
           #   switch.is_on: use_wake_word
@@ -144,10 +143,12 @@ esp_adf:
 microphone:
   - platform: esp_adf
     id: korvo_mic
+    # bits_per_sample: 32 bit # TEST
 
 speaker:
   - platform: esp_adf
     id: korvo_speaker
+    # mode: mono # TEST
 
 voice_assistant:
   id: voice_asst
@@ -155,23 +156,11 @@ voice_assistant:
   noise_suppression_level: 2.0
   volume_multiplier: 4.0
   speaker: korvo_speaker
-  auto_gain: 15dBFS
-  on_listening:
-    - light.turn_on:
-        id: led_ring
-        blue: 0%
-        red: 0%
-        green: 0%
-        brightness: 80%
-        effect: Listening
-  on_tts_start:
-    - light.turn_on:
-        id: led_ring
-        blue: 0%
-        red: 0%
-        green: 100%
-        brightness: 50%
-        effect: pulse
+  on_stt_end:
+      then: 
+        - light.turn_off: led_ring
+  on_error:
+          - micro_wake_word.start:  
   on_end:
         then:
           - light.turn_off: led_ring
@@ -179,8 +168,33 @@ voice_assistant:
               not:
                 voice_assistant.is_running:
           - micro_wake_word.start:
-  on_error:
-    - micro_wake_word.start:
+  # auto_gain: 15dBFS
+  # on_listening:
+  #   - light.turn_on:
+  #       id: led_ring
+  #       blue: 0%
+  #       red: 0%
+  #       green: 0%
+  #       brightness: 80%
+  #       effect: Listening
+  # on_tts_start:
+  #   - light.turn_on:
+  #       id: led_ring
+  #       blue: 0%
+  #       red: 0%
+  #       green: 100%
+  #       brightness: 50%
+  #       effect: pulse
+  # on_end:
+  #       then:
+  #         - light.turn_off: led_ring
+  #         - wait_until:
+  #             not:
+  #               voice_assistant.is_running:
+  #         - micro_wake_word.start:
+  # on_error:
+  #   - micro_wake_word.start:
+
 switch:
   - platform: template
     id: mute
@@ -240,10 +254,12 @@ light:
     default_transition_length: 0s
     effects:
       - pulse:
-          name: "Pulse"
+      - pulse:
+          name: "Fast Pulse"
           transition_length: 0.5s
           update_interval: 0.5s
-          max_brightness: 50%
+          min_brightness: 0%
+          max_brightness: 100%
       - addressable_twinkle:
           name: "Booting"
           twinkle_probability: 5%
