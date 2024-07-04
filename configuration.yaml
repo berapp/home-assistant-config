@@ -37,16 +37,16 @@ http:
 # Example configuration.yaml entry
 # device_tracker:
 #   - platform: bluetooth_tracker
-    # request_rssi: true
+# request_rssi: true
 
 # Example configuration.yaml entry
-# device_tracker:
-#   - platform: bluetooth_le_tracker
-#     interval_seconds: 10
-#     consider_home: 180
-#     new_device_defaults:
-#       track_new_devices: true
-# #  - platform: bluetooth_tracker
+device_tracker:
+  - platform: bluetooth_le_tracker
+    interval_seconds: 10
+    consider_home: 180
+    new_device_defaults:
+      track_new_devices: true
+#  - platform: bluetooth_tracker
 # # Example configuration.yaml entry
 # bluetooth:
 alarm_control_panel:

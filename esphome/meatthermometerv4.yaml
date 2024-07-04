@@ -21,7 +21,8 @@ api:
     key: !secret meatthermometerv4-api_encryption_key
 
 ota:
-  password: !secret meatthermometerv4-ota_password
+  - platform: esphome
+    password: !secret meatthermometerv4-ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -49,9 +50,9 @@ sensor:
       # - 317000Ohm -> 0°C
       # - 36100Ohm -> 50°C
       # - 6550Ohm -> 100°C
-      # b_constant: 3950
+      b_constant: 3950
       # b_constant: 4200
-      b_constant: 6750
+      # b_constant: 6750 6-29-2024
       reference_temperature: 25°C
       reference_resistance: 100kOhm
     name: Ambient Temperature
@@ -77,9 +78,9 @@ sensor:
       # - 317000Ohm -> 0°C
       # - 36100Ohm -> 50°C
       # - 6550Ohm -> 100°C
-      # b_constant: 3950
+      b_constant: 3950
       # b_constant: 4200
-      b_constant: 6750
+      # b_constant: 6750 6-29-2024
       reference_temperature: 25°C
       reference_resistance: 100kOhm
     name: Ambient Temperature Realtime
@@ -210,17 +211,18 @@ sensor:
     sensor: source_sensor1
     accuracy_decimals: 0
     filters:
-    # - clamp:
-    # #     # max_value: 194872
-    #     min_value: 2328
-    #     ignore_out_of_range: true
+    - clamp:
+        max_value: 2009005
+        min_value: 2328
+        ignore_out_of_range: true
     - median:
         window_size: 99
         send_every: 1
     configuration: DOWNSTREAM
     # resistor: 9700Ohm
     # resistor: 9100Ohm
-    resistor: 2kOhm
+    resistor: 100kOhm
+    # resistor: 47kOhm
     name: Ambient Resistance
     on_value:
       then:
@@ -241,7 +243,8 @@ sensor:
     configuration: DOWNSTREAM
     # resistor: 9700Ohm
     # resistor: 9100Ohm
-    resistor: 2kOhm
+    resistor: 100kOhm
+    # resistor: 47kOhm
     name: Ambient Resistance Realtime
 
   - platform: resistance

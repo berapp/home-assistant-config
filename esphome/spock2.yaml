@@ -75,7 +75,8 @@ external_components:
     refresh: 0s
 
 ota:
-  password: !secret spock2-ota_password
+  - platform: esphome
+    password: !secret spock2-ota_password
 logger:
   level: DEBUG
 api:
@@ -111,9 +112,6 @@ api:
   #         green: 100%
   #         brightness: 50%
   #         effect: connecting
-
-# dashboard_import:
-#   package_import_url: github://esphome/firmware/voice-assistant/esp32-s3-korvo1.yaml@main
 
 captive_portal:
 wifi:

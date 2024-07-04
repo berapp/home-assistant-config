@@ -47,7 +47,8 @@ api:
     key: !secret front-door-motion-api_encryption_key
 
 ota:
-  password: !secret front-door-motion-ota_password
+  - platform: esphome
+    password: !secret front-door-motion-ota_password
 
 wifi:
   ssid: !secret wifi_ssid

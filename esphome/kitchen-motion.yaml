@@ -17,7 +17,8 @@ api:
     key: !secret kitchen-motion-api_encryption_key
 
 ota:
-  password: !secret kitchen-motion-ota_password
+  - platform: esphome
+    password: !secret kitchen-motion-ota_password
 
 wifi:
   ssid: !secret wifi_ssid

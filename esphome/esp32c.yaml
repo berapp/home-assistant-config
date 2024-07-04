@@ -18,7 +18,8 @@ api:
     key: !secret esp32c-api_encryption_key
 
 ota:
-  password: !secret esp32c-ota_password
+  - platform: esphome
+    password: !secret esp32c-ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -36,7 +37,15 @@ uart:
   baud_rate: 256000
   parity: NONE
   stop_bits: 1
-
+output:
+  - platform: ledc
+    id: motion_led
+    pin: GPIO2
+light:
+  - platform: monochromatic
+    output: motion_led
+    name: "Motion Indicator"
+    id: motion_indicator
 
 ld2410:
 
@@ -44,13 +53,24 @@ binary_sensor:
   - platform: ld2410
     has_target:
       name: Presence
+      id: presence
+      on_state:
+        if:
+          condition:
+            binary_sensor.is_on: presence
+          then:
+            - light.turn_on:
+                id: motion_indicator
+                brightness: 25%
+          else:
+            - light.turn_off: motion_indicator
     has_moving_target:
       name: Moving Target
     has_still_target:
       name: Still Target
-status_led:
-  pin:
-    number: GPIO2 #ESP8266 OnBroad LED
+#status_led:
+  #pin:
+    #number: GPIO2 #ESP8266 OnBroad LED
 
     
 switch:

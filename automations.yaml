@@ -34,7 +34,6 @@
   trigger:
   - platform: sun
     event: sunrise
-    offset: 00:30:00
   - platform: time
     at: 01:00:00
   condition: []
@@ -234,25 +233,6 @@
     target:
       device_id: cf9f5b8c154ffdd77935b918cd6d01a8
   mode: single
-- id: '1688781337890'
-  alias: Turn off sleep mode
-  description: ''
-  trigger:
-  - platform: time
-    at: 06:00:00
-  condition: []
-  action:
-  - service: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.sleep_mode
-  - service: switch.turn_off
-    target:
-      entity_id:
-      - switch.bathroom2motion_stay_off
-      - switch.master_bath_motion_stay_off
-    data: {}
-  mode: single
 - id: '1689217497552'
   alias: Turn on AC 2
   description: ''
@@ -429,15 +409,11 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.bathroom2motion_presence
-    to: 'on'
-  - platform: state
-    entity_id:
     - binary_sensor.esp32c_presence
     to: 'on'
   condition:
   - condition: state
-    entity_id: switch.bathroom2motion_stay_off
+    entity_id: switch.esp32c_stay_off
     state: 'off'
   action:
   - service: light.turn_on
@@ -451,14 +427,6 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.bathroom2motion_presence
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - platform: state
-    entity_id:
     - binary_sensor.esp32c_presence
     to: 'off'
     for:
@@ -467,7 +435,7 @@
       seconds: 0
   condition:
   - condition: state
-    entity_id: switch.bathroom2motion_stay_on
+    entity_id: switch.esp32c_stay_on
     state: 'off'
   action:
   - service: light.turn_off
@@ -479,10 +447,6 @@
   alias: Master Bath Lights On Day
   description: ''
   trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.master_bath_motion_presence
-    to: 'on'
   - platform: state
     entity_id:
     - binary_sensor.master_bathroom_motion_32_presence
@@ -502,7 +466,7 @@
       - mon
       - sun
     - condition: state
-      entity_id: switch.master_bath_motion_stay_off
+      entity_id: switch.master_bathroom_motion_32_stay_off
       state: 'off'
   action:
   - service: light.turn_on
@@ -519,14 +483,6 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.master_bath_motion_presence
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - platform: state
-    entity_id:
     - binary_sensor.master_bathroom_motion_32_presence
     to: 'off'
     for:
@@ -536,25 +492,20 @@
   condition:
   - condition: state
     state: 'off'
-    entity_id: switch.master_bath_motion_stay_on
+    entity_id: switch.master_bathroom_motion_32_stay_on
   action:
   - service: light.turn_off
     data: {}
     target:
       entity_id:
-      - light.kitchen_light
-      - light.lanai_light
-      - light.shellydimmer2_c45bbe791de0
       - light.master_bathroom_mirror_light
+      - light.kitchen_light
+      - light.shellydimmer2_c45bbe791de0
   mode: single
 - id: '1698277762507'
   alias: Master Bath Light On Night
   description: ''
   trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.master_bath_motion_presence
-    to: 'on'
   - platform: state
     entity_id:
     - binary_sensor.master_bathroom_motion_32_presence
@@ -563,7 +514,7 @@
   - condition: and
     conditions:
     - condition: state
-      entity_id: switch.master_bath_motion_stay_off
+      entity_id: switch.master_bathroom_motion_32_stay_off
       state: 'off'
     - condition: time
       after: '23:00:00'
@@ -746,19 +697,6 @@
       - media_content_type: provider
         media_content_id: media-source://tts/tts.piper?message=Dad+left+work&language=en_US&voice=en_US-amy-low
   mode: single
-- id: '1703905966088'
-  alias: Night mode medium
-  description: ''
-  trigger:
-  - platform: time
-    at: 01:00:00
-  condition: []
-  action:
-  - service: switch.turn_on
-    target:
-      entity_id: switch.bathroom2motion_stay_off
-    data: {}
-  mode: single
 - id: '1705535746064'
   alias: Meat Thermometer Automation
   description: ''
@@ -807,15 +745,15 @@
   alias: Kitchen light at night
   description: ''
   trigger:
-  - platform: device
-    type: turned_on
-    device_id: fa6e504f980a5db06f47bbb2f9a4d884
-    entity_id: 1f58ebdf0b35ae08b43fdbb84ed34c4e
-    domain: light
+  - platform: state
+    entity_id:
+    - light.kitchen_light_2
+    from: 'off'
+    to: 'on'
   condition:
-  - condition: time
-    after: 01:00:00
-    before: 06:00:00
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'on'
   action:
   - service: light.turn_on
     target:
@@ -827,17 +765,15 @@
   alias: Kitchen light day
   description: ''
   trigger:
-  - platform: device
-    type: turned_on
-    device_id: fa6e504f980a5db06f47bbb2f9a4d884
-    entity_id: 1f58ebdf0b35ae08b43fdbb84ed34c4e
-    domain: light
+  - platform: state
+    entity_id:
+    - light.kitchen_light_2
+    from: 'off'
+    to: 'on'
   condition:
-  - condition: not
-    conditions:
-    - condition: time
-      after: 01:00:00
-      before: 06:00:00
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
   action:
   - service: light.turn_on
     target:
@@ -994,6 +930,9 @@
     device_id: 82a60fff4262cd7b096a087fe6d16461
     entity_id: f42eb3ae18c5f05b2b3ab3ba159b5ba9
     domain: binary_sensor
+  - platform: conversation
+    command:
+    - Main lights off
   condition: []
   action:
   - service: scene.turn_on
@@ -1020,6 +959,10 @@
     device_id: 82a60fff4262cd7b096a087fe6d16461
     entity_id: 51c6b0e47bb20c165c9f9c2955eb5cc3
     domain: binary_sensor
+  - platform: conversation
+    command:
+    - I can't see
+    - Main lights on
   condition: []
   action:
   - service: scene.turn_on
@@ -1056,29 +999,6 @@
     metadata: {}
     target:
       entity_id: scene.morning
-  mode: single
-- id: '1712951136519'
-  alias: Bedtime
-  description: ''
-  trigger:
-  - platform: conversation
-    command:
-    - '[it''s] bedtime'
-  - platform: conversation
-    command:
-    - bedtime
-    enabled: false
-  condition: []
-  action:
-  - service: scene.turn_on
-    metadata: {}
-    target:
-      entity_id: scene.bed_time
-  - service: automation.trigger
-    target:
-      entity_id: automation.turn_off_living_room_tv
-    data:
-      skip_condition: true
   mode: single
 - id: '1712970456537'
   alias: Something on roof
@@ -1158,37 +1078,6 @@
     entity_id: de33237ef6b5a0ba67a54da3f93fa80e
     domain: light
   mode: single
-- id: '1716757545123'
-  alias: Magic Room Door Open
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.magic_room_door
-    to: 'on'
-  condition: []
-  action:
-  - type: turn_on
-    device_id: c86910755a8b97ad1a4fafe1b860892f
-    entity_id: f31b9b15b9e6e060d7d0f90de45b68f5
-    domain: light
-    flash: short
-  mode: single
-- id: '1716757612111'
-  alias: Magic Room Door Closed
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.magic_room_door
-    to: 'off'
-  condition: []
-  action:
-  - type: turn_off
-    device_id: c86910755a8b97ad1a4fafe1b860892f
-    entity_id: f31b9b15b9e6e060d7d0f90de45b68f5
-    domain: light
-  mode: single
 - id: '1716766309312'
   alias: Magic Room Door Alarm
   description: ''
@@ -1231,4 +1120,216 @@
         device_id: c86910755a8b97ad1a4fafe1b860892f
         entity_id: f437eaeb22d345decb716f29883d28a0
         domain: binary_sensor
+  mode: single
+- id: '1718813693410'
+  alias: Mail time
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.mailbox_mail_box
+    from:
+    to: 'on'
+  condition: []
+  action:
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      volume_level: 0.75
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://media_source/local/Blues Clues Mail Time Song
+        [TubeRipper.com].mp3
+      media_content_type: audio/mpeg
+    metadata:
+      title: Blues Clues Mail Time Song [TubeRipper.com].mp3
+      thumbnail:
+      media_class: music
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://media_source
+    enabled: true
+  mode: single
+- id: '1719160057206'
+  alias: Raining
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.openweathermap_precipitation_kind
+    from:
+    to: Rain
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=It+is+raining&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: It is raining
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=It+is+raining&language=en_US&voice=en_US-amy-low
+  mode: single
+- id: '1719194928896'
+  alias: Master Bedroom Light Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.voiceassist4_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    from:
+  condition:
+  - condition: state
+    entity_id: switch.voiceassist4_stay_on
+    state: 'off'
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: 7ceb340e3f3f70d0c9d1957b484a2ea6
+  mode: single
+- id: '1719194990767'
+  alias: Master Bedroom Light On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.voiceassist4_presence
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    from:
+  condition:
+  - condition: state
+    entity_id: switch.voiceassist4_stay_off
+    state: 'off'
+  action:
+  - service: light.turn_on
+    target:
+      device_id:
+      - 7ceb340e3f3f70d0c9d1957b484a2ea6
+    data: {}
+  mode: single
+- id: '1719277353809'
+  alias: Bedtime Button On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.bed_time_button
+    to: 'on'
+  condition: []
+  action:
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.bed_time
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.sleep_mode
+    data: {}
+  - service: switch.turn_on
+    target:
+      entity_id:
+      - switch.esp32c_stay_off
+    data: {}
+  mode: single
+- id: '1719277627951'
+  alias: Bedtime Button Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.bed_time_button
+    to: 'off'
+  - platform: time
+    at: 06:00:00
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.sleep_mode
+      - input_boolean.bed_time_button
+    data: {}
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.esp32c_stay_off
+      - switch.master_bathroom_motion_32_stay_off
+      - switch.livingroom_stay_off
+      - switch.master_bedroom_ir_remote_stay_off
+    data: {}
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.morning
+  mode: single
+- id: '1719285412433'
+  alias: Turn on light when front door opens
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door_door
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'on'
+  action:
+  - service: light.turn_on
+    target:
+      entity_id:
+      - light.hall_light
+      - light.extra_bulb
+    data: {}
+  mode: single
+- id: '1719683444453'
+  alias: Main House Empty
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.livingroom_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+  condition: []
+  action:
+  - service: media_player.turn_off
+    target:
+      entity_id: media_player.projector_2
+    data: {}
+    enabled: false
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.main_lights_off
   mode: single

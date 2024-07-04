@@ -12,7 +12,8 @@ api:
   password: ""
 
 ota:
-  password: ""
+  - platform: esphome
+    password: ""
 
 wifi:
   ssid: !secret wifi_ssid
@@ -28,14 +29,35 @@ output:
 - platform: esp8266_pwm
   id: my_led
   pin: GPIO15
-
+# output: 
+- platform: esp8266_pwm
+  id: openindicator_led
+  pin: GPIO2
+  inverted: true
 light: 
-- platform: monochromatic
-  name: "Alarm led"
-  output: my_led
+  - platform: monochromatic
+    name: "Alarm led"
+    output: my_led
+# light:
+  - platform: monochromatic
+    id: open_indicator
+    name: "Open Indicator"
+    output: openindicator_led
+    
 
 binary_sensor:
   - platform: gpio
+    id: dooropen
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: dooropen
+            then:
+              - light.turn_on:
+                  id: open_indicator
+                  brightness: 50%
+            else:
+              - light.turn_off: open_indicator
     name: "Magic Room Door"
     device_class: door
     pin:

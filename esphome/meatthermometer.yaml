@@ -34,7 +34,8 @@ api:
     key: !secret meatthermometer-api_encryption_key
 
 ota:
-  password: !secret meatthermometer-ota_password
+  - platform: esphome
+    password: !secret meatthermometer-ota_password
 
 wifi:
   ssid: !secret wifi_ssid
