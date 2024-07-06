@@ -1333,3 +1333,20 @@
     target:
       entity_id: scene.main_lights_off
   mode: single
+- id: '1720095325668'
+  alias: Press Projector Center Button
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Skip this
+    - Skip commercial
+  condition: []
+  action:
+  - service: remote.send_command
+    metadata: {}
+    data:
+      command: DPAD_CENTER
+    target:
+      entity_id: remote.projector
+  mode: single

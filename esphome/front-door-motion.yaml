@@ -88,10 +88,10 @@ globals:
     type: bool
     restore_value: no
     initial_value: "false"
-status_led:
-  pin:
-    number: GPIO2 #ESP8266 OnBroad LED
-    inverted: true
+# status_led:
+#   pin:
+#     number: GPIO2 #ESP8266 OnBroad LED
+#     inverted: true
 interval:
   - interval: 1s #Clearance Scan Time
     setup_priority: -200
@@ -266,11 +266,37 @@ binary_sensor:
     name: ${upper_devicename} LD1125H Movement
     id: LD1125H_Mov_Binary
     device_class: motion
+  - platform: gpio
+    id: frontdoorpresence
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: frontdoorpresence
+            then:
+              - light.turn_on:
+                  id: presence_indicator
+                  brightness: 50%
+            else:
+              - light.turn_off: presence_indicator
+    name: "Front Door Presence"
+    pin:
+      number: 14
+      # inverted: true
+      mode: INPUT_PULLUP
 
 
 
+###########################################3
 
+output: 
+- platform: esp8266_pwm
+  id: presenceindicator_led
+  pin: GPIO2
+  inverted: true
 
-
-
+light:
+  - platform: monochromatic
+    id: presence_indicator
+    name: "Open Indicator"
+    output: presenceindicator_led
     

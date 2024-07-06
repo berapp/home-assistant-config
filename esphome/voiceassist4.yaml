@@ -42,7 +42,7 @@ psram:
   speed: 80MHz
 # Enable logging
 logger:
-  level: INFO
+  level: DEBUG
 
 # Enable Home Assistant API
 api:

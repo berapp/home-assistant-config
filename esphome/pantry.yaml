@@ -1,0 +1,615 @@
+esphome:
+  name: "pantry"
+  friendly_name: Pantry
+  on_boot:
+    - priority: -100.0 # everything is initialized, system is online - if condition waits for connection
+      then:
+        if:
+          condition:
+              - wifi.connected:
+          then:
+            - light.turn_off: # turns off light waiting on automation to start
+                id: rgb_led
+                transition_length: 100ms
+            - delay: 1s
+            # - voice_assistant.start_continuous:
+            # - delay: 1800s
+            # - switch.turn_on:
+            #     id: restart_switch
+    - priority: 300.0 # after sensor setup, before WIFI initialization 
+      then:
+        - light.turn_on: # indication that the controller has power
+            id: rgb_led
+            brightness: 100%
+            red: 100%
+            green: 0%
+            blue: 0%
+            effect: Booting
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG
+
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret ednamode-api_encryption_key
+  # on_client_connected:
+  #   then:
+  #     - if:
+  #         condition:
+  #           switch.is_on: use_wake_word
+  #         then:
+  #           - delay: 1s
+  #           - voice_assistant.start_continuous:
+  #           - delay: 1s
+  #           - voice_assistant.stop:
+  #           - delay: 2s
+  #           - voice_assistant.start_continuous:
+  #           - script.execute: reset_led
+
+ota:
+  - platform: esphome
+    password: !secret ednamode-ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Ednamode Fallback Hotspot"
+    password: !secret ednamode-ap_password
+
+captive_portal:
+uart:
+  rx_pin: GPIO16
+  tx_pin: GPIO17
+  baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
+ld2410:
+# i2s_audio:
+#   - id: i2s_in
+#     i2s_lrclk_pin: GPIO21   #WS / LRC
+#     i2s_bclk_pin: GPIO22    #SCK /BCLK
+
+# microphone:
+#   - platform: i2s_audio
+#     id: va_mic
+#     adc_type: external
+#     i2s_din_pin: GPIO23    #SD
+#     channel: left
+#     pdm: false
+#     i2s_audio_id: i2s_in
+#     bits_per_sample: 16bit
+    
+    # on_data:
+    #   - logger.log:
+    #       format: "Received %d bytes"
+    #       args: ['x.size()']
+# speaker: #media player won't work currently with Piper, have to use speaker component. Media player works with cloud.
+#   - platform: i2s_audio
+#     id: media_out
+#     dac_type: external
+#     i2s_audio_id: i2s_amp
+#     i2s_dout_pin: GPIO22
+#     mode: mono
+# voice_assistant:
+#   microphone: va_mic
+#   id: va
+#   noise_suppression_level: 2.0
+#   volume_multiplier: 4.0
+#   on_listening:
+#     - light.turn_on:
+#         id: rgb_led
+#         blue: 100%
+#         red: 100%
+#         green: 100%
+#         brightness: 80%
+#         effect: pulse
+#   on_tts_start:
+#     - light.turn_on:
+#         id: rgb_led
+#         blue: 0%
+#         red: 0%
+#         green: 100%
+#         brightness: 50%
+#         effect: pulse
+#   on_end:
+#     - light.turn_off: rgb_led
+#     - switch.turn_off: listen_button
+  #   - delay: 100ms
+    # - wait_until:
+    #     not:
+    #       speaker.is_playing:
+    # - script.execute: reset_led
+  # on_error:
+  #   - if:
+  #         condition:
+  #           switch.is_off: stop_wake_word
+  #         then:
+  #         - light.turn_on:
+  #             id: rgb_led
+  #             blue: 0%
+  #             red: 100%
+  #             green: 0%
+  #             brightness: 50%
+  #             effect: none
+  #         - switch.turn_on: assist_error
+  #         - delay: 1s
+  #         - script.execute: reset_assist
+  #         - script.wait: reset_assist
+  #         - lambda: |-
+  #             if (code == "wake-provider-missing" || code == "wake-engine-missing") {
+  #               id(use_wake_word).turn_off();
+  #             }
+
+switch:
+  - platform: restart
+    name: "Pantry Restart"
+    id: restart_switch
+  - platform: template
+    id: stayon
+    name: "Stay On"
+    optimistic: true
+  - platform: template
+    id: stayoff
+    name: "Stay Off"
+    optimistic: true
+  - platform: ld2410
+    engineering_mode:
+      name: "engineering mode"
+    bluetooth:
+      name: "control bluetooth"
+
+  # - platform: template
+  #   name: Listen
+  #   id: listen_button
+  #   optimistic: true
+  #   on_turn_on:
+  #     - voice_assistant.start:
+  #         silence_detection: false
+  #   entity_category: config
+  #   on_turn_on:
+  #     - lambda: id(va).set_use_wake_word(true);
+  #     - if:
+  #         condition:
+  #           not:
+  #             - voice_assistant.is_running
+  #         then:
+  #           - voice_assistant.start_continuous
+  #     - script.execute: reset_led
+  #     - switch.turn_off: assist_error
+    # on_turn_off:
+    #   - voice_assistant.stop
+    #   - switch.turn_off: listen_button
+    #   - light.turn_off: rgb_led
+
+  # - platform: template
+  #   name: Assist Error
+  #   id: assist_error
+  #   optimistic: true
+  #   restore_mode: RESTORE_DEFAULT_OFF
+  #   entity_category: config
+  #   on_turn_on:
+  #     - switch.turn_off: use_wake_word
+  #     - if:
+  #         condition:
+  #           switch.is_off: stop_wake_word
+  #         then:
+  #         - delay: 10s
+  #         - switch.turn_on: use_wake_word
+  # - platform: template
+  #   name: Stop wake word
+  #   id: stop_wake_word
+  #   optimistic: true
+  #   restore_mode: RESTORE_DEFAULT_OFF
+  #   entity_category: config
+  #   on_turn_on:
+  #     - lambda: id(va).set_use_wake_word(false);
+  #     - voice_assistant.stop
+  #     - switch.turn_off: assist_error
+  #     - switch.turn_off: use_wake_word
+  #     - script.execute: reset_led
+
+output:
+  - platform: ledc
+    id: output_red
+    pin: GPIO13
+  - platform: ledc
+    id: output_green
+    pin: GPIO12
+  - platform: ledc
+    id: output_blue
+    pin: GPIO14
+  - platform: ledc
+    id: motion_led
+    pin: GPIO2
+  - platform: ledc
+    id: led1
+    pin: GPIO23
+  
+
+light:
+  - platform: monochromatic
+    output: led1
+    name: "Shelf 1 Light"
+    id: led1a
+  - platform: monochromatic
+    output: motion_led
+    name: "Motion Indicator"
+    id: motion_indicator
+  - platform: rgb
+    name: "RGB LED"
+    red: output_red
+    green: output_green
+    blue: output_blue
+    id: rgb_led
+    effects:
+      - pulse:
+          name: "Pulse"
+          transition_length: 0.5s
+          update_interval: 0.5s
+          max_brightness: 50%
+      # Use default parameters:
+      - random:
+      # Customize parameters
+      - random:
+          name: "My Slow Random Effect"
+          transition_length: 30s
+          update_interval: 30s
+      - random:
+          name: "My Fast Random Effect"
+          transition_length: 4s
+          update_interval: 5s
+      - pulse:
+          name: "Asymmetrical Pulse"
+          transition_length:
+            on_length: 1s
+            off_length: 500ms
+          update_interval: 1.5s
+      - strobe:
+      - strobe:
+          name: Strobe Effect With Custom Values
+          colors:
+            - state: true
+              brightness: 100%
+              red: 100%
+              green: 90%
+              blue: 0%
+              duration: 500ms
+            - state: false
+              duration: 250ms
+            - state: true
+              brightness: 100%
+              red: 0%
+              green: 100%
+              blue: 0%
+              duration: 500ms
+      - flicker:
+      - flicker:
+          name: Flicker Effect With Custom Values
+          alpha: 95%
+          intensity: 1.5%
+
+# script:
+  # - id: reset_led
+  #   then:
+  #     - if:
+  #         condition:
+  #           switch.is_on: use_wake_word
+  #         then:
+  #           light.turn_off: rgb_led
+  # - id: reset_assist
+  #   then:
+  #     - light.turn_on:
+  #         id: rgb_led
+  #         blue: 0%
+  #         red: 100%
+  #         green: 0%
+  #         brightness: 25%
+  #         effect: Pulse
+  #     - switch.turn_off: use_wake_word
+# esp32_touch:
+#   setup_mode: false
+# binary_sensor:
+#   - platform: esp32_touch
+#     name: "Listen"
+#     pin: GPIO4
+#     threshold: 1000
+#     on_press:
+#       - switch.toggle: listen_button
+  # - platform: esp32_touch
+  #   name: "Stop wake word"
+  #   pin: GPIO15
+  #   threshold: 1000
+  #   on_press:
+  #     - switch.toggle: stop_wake_word
+  # - platform: esp32_touch
+  #   name: "ESP32 Touch Pad GPIO12"
+  #   pin: GPIO12
+  #   threshold: 1000
+  #   on_press:
+  #     - switch.turn_on: use_wake_word
+  # - platform: esp32_touch
+  #   name: "ESP32 Touch Pad GPIO14"
+  #   pin: GPIO14
+  #   threshold: 1000
+  #   on_press:
+  #     - switch.turn_on: use_wake_word
+  # - platform: esp32_touch
+  #   name: "ESP32 Touch Pad GPIO27"
+  #   pin: GPIO27
+  #   threshold: 1000
+  #   on_press:
+  #     - switch.turn_on: use_wake_word
+
+
+binary_sensor:
+  - platform: gpio
+    id: shelf1
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: shelf1
+            then:
+              - light.turn_on:
+                  id: led1a
+                  brightness: 100%
+            else:
+              - light.turn_off: led1a
+    name: "Pantry Shelf 1"
+    # device_class: door
+    pin:
+      number: 32
+      # inverted: true
+      mode: INPUT_PULLUP
+  - platform: gpio
+    id: shelf2
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: shelf2
+            then:
+              - light.turn_on:
+                  id: rgb_led
+                  brightness: 50%
+                  red: 0%
+                  green: 100%
+                  blue: 0%
+            else:
+              - light.turn_off: rgb_led
+    name: "Pantry Shelf 2"
+    # device_class: door
+    pin:
+      number: 33
+      # inverted: true
+      mode: INPUT_PULLUP
+  - platform: gpio
+    id: shelf3
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: shelf3
+            then:
+              - light.turn_on:
+                  id: rgb_led
+                  brightness: 50%
+                  red: 0%
+                  green: 0%
+                  blue: 100%
+            else:
+              - light.turn_off: rgb_led
+    name: "Pantry Shelf 3"
+    # device_class: door
+    pin:
+      number: 25
+      # inverted: true
+      mode: INPUT_PULLUP
+  - platform: gpio
+    id: shelf4
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: shelf4
+            then:
+              - light.turn_on:
+                  id: rgb_led
+                  brightness: 50%
+                  red: 0%
+                  green: 100%
+                  blue: 100%
+            else:
+              - light.turn_off: rgb_led
+    name: "Pantry Shelf 4"
+    # device_class: door
+    pin:
+      number: 26
+      # inverted: true
+      mode: INPUT_PULLUP
+  - platform: gpio
+    id: shelf5
+    on_state:
+          if:
+            condition:
+              binary_sensor.is_on: shelf5
+            then:
+              - light.turn_on:
+                  id: rgb_led
+                  brightness: 50%
+                  red: 100%
+                  green: 0%
+                  blue: 100%
+            else:
+              - light.turn_off: rgb_led
+    name: "Pantry Shelf 5"
+    # device_class: door
+    pin:
+      number: 27
+      # inverted: true
+      mode: INPUT_PULLUP
+
+
+  - platform: ld2410
+    has_target:
+      name: Presence
+      id: presence
+      on_state:
+        if:
+          condition:
+            binary_sensor.is_on: presence
+          then:
+            - light.turn_on: 
+                id: motion_indicator
+                brightness: 25%
+          else:
+            - light.turn_off: motion_indicator
+    has_moving_target:
+      name: Moving Target
+    has_still_target:
+      name: Still Target
+number:
+  - platform: ld2410
+    timeout:
+      name: timeout
+    light_threshold:
+      name: light threshold
+    max_move_distance_gate:
+      name: max move distance gate
+    max_still_distance_gate:
+      name: max still distance gate
+    g0:
+      move_threshold:
+        name: g0 move threshold
+      still_threshold:
+        name: g0 still threshold
+    g1:
+      move_threshold:
+        name: g1 move threshold
+      still_threshold:
+        name: g1 still threshold
+    g2:
+      move_threshold:
+        name: g2 move threshold
+      still_threshold:
+        name: g2 still threshold
+    g3:
+      move_threshold:
+        name: g3 move threshold
+      still_threshold:
+        name: g3 still threshold
+    g4:
+      move_threshold:
+        name: g4 move threshold
+      still_threshold:
+        name: g4 still threshold
+    g5:
+      move_threshold:
+        name: g5 move threshold
+      still_threshold:
+        name: g5 still threshold
+    g6:
+      move_threshold:
+        name: g6 move threshold
+      still_threshold:
+        name: g6 still threshold
+    g7:
+      move_threshold:
+        name: g7 move threshold
+      still_threshold:
+        name: g7 still threshold
+    g8:
+      move_threshold:
+        name: g8 move threshold
+      still_threshold:
+        name: g8 still threshold
+button:
+  - platform: ld2410
+    factory_reset:
+      name: "factory reset"
+    restart:
+      name: "restart"
+    query_params:
+      name: query params
+select:
+  - platform: ld2410
+    distance_resolution:
+      name: "distance resolution"
+    baud_rate:
+      name: "baud rate"
+    light_function:
+      name: light function
+    out_pin_level:
+      name: out pin level
+sensor:
+  - platform: uptime
+    name: Uptime Sensor
+  - platform: ld2410
+    light:
+      name: light
+    moving_distance:
+      name : Moving Distance
+    still_distance:
+      name: Still Distance
+    moving_energy:
+      name: Move Energy
+    still_energy:
+      name: Still Energy
+    detection_distance:
+      name: Detection Distance
+    g0:
+      move_energy:
+        name: g0 move energy
+      still_energy:
+        name: g0 still energy
+    g1:
+      move_energy:
+        name: g1 move energy
+      still_energy:
+        name: g1 still energy
+    g2:
+      move_energy:
+        name: g2 move energy
+      still_energy:
+        name: g2 still energy
+    g3:
+      move_energy:
+        name: g3 move energy
+      still_energy:
+        name: g3 still energy
+    g4:
+      move_energy:
+        name: g4 move energy
+      still_energy:
+        name: g4 still energy
+    g5:
+      move_energy:
+        name: g5 move energy
+      still_energy:
+        name: g5 still energy
+    g6:
+      move_energy:
+        name: g6 move energy
+      still_energy:
+        name: g6 still energy
+    g7:
+      move_energy:
+        name: g7 move energy
+      still_energy:
+        name: g7 still energy
+    g8:
+      move_energy:
+        name: g8 move energy
+      still_energy:
+        name: g8 still energy
+text_sensor:
+  - platform: ld2410
+    version:
+      name: "firmware version"

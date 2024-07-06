@@ -345,6 +345,11 @@ binary_sensor:
 sensor:
   - platform: uptime
     name: Uptime Sensor
+    on_value_range:
+      - above: 1800.0
+        then:
+          - switch.turn_on: restart_switch
+
   - id: button_adc
     platform: adc
     internal: true

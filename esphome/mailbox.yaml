@@ -7,6 +7,7 @@ esp8266:
 
 # Enable logging
 logger:
+  level: DEBUG
 
 # Enable Home Assistant API
 api:
@@ -48,8 +49,13 @@ sensor:
     accuracy_decimals: 0
     unit_of_measurement: "%"
     icon: mdi:battery-medium
+    on_raw_value:
+      then:
+         logger.log:
+            format: "BERT The battery sensor reports value %.3f"
+            args: [ 'id(battery).state' ]
     filters:
-      - multiply: 4.5
+      - multiply: 4.56
       - calibrate_linear:
          method: exact
          datapoints:
@@ -61,13 +67,15 @@ sensor:
           - 4.20 -> 100.0
       - lambda: |-
           if (x <= 100) {
-            return x;
+            if (x <0) {
+              return 0;
+            } else {
+              return x;
+            }
           } else {
             return 100;
           }
-          if (x <0) {
-            return 0;
-          }
+          
 
 deep_sleep:
   id: deep_sleep_1
