@@ -1,0 +1,25 @@
+esphome:
+  name: ble_tracker
+  friendly_name: BLETracker
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+    version: recommended
+
+logger:
+  level: INFO
+
+api:
+  encryption:
+    key: !secret meatthermometer-api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret meatthermometer-ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+captive_portal:
