@@ -1,71 +1,27 @@
 - id: '1683120433001'
   alias: Turn on Entryway light when anyone gets home
   description: ''
-  trigger:
-  - platform: zone
-    entity_id: person.robert_rapp
+  triggers:
+  - entity_id: person.robert_rapp
     zone: zone.home
     event: enter
-  - platform: zone
-    entity_id: person.steph_rapp
+    trigger: zone
+  - entity_id: person.steph_rapp
     zone: zone.home
     event: enter
-  condition:
+    trigger: zone
+  - entity_id: person.becca_rapp
+    zone: zone.home
+    event: enter
+    trigger: zone
+  conditions:
   - condition: sun
     after: sunset
-  action:
-  - service: light.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       device_id: 868ebf898e9ff2f0bef0e829b48ae85a
-  mode: single
-- id: '1683131487116'
-  alias: Dad left home
-  description: ''
-  use_blueprint:
-    path: homeassistant/notify_leaving_zone.yaml
-    input:
-      person_entity: person.robert_rapp
-      zone_entity: zone.home
-      notify_device: 07bd19b5c047b104b5d27150ea115e25
-- id: '1683131572695'
-  alias: Turn off lights at sunrise
-  description: ''
-  trigger:
-  - platform: sun
-    event: sunrise
-  - platform: time
-    at: 01:00:00
-  condition: []
-  action:
-  - service: light.turn_off
-    data: {}
-    target:
-      area_id:
-      - entryway
-      - dining_room
-      - kitchen
-      - living_room
-      - hallway
-  mode: single
-- id: '1684895696934'
-  alias: Lights on at sunset 3
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sun.sun
-    attribute: elevation
-    below: 2.8
-  condition: []
-  action:
-  - service: scene.turn_on
-    target:
-      entity_id: scene.lights_on_at_sunset
-    metadata: {}
-  - service: scene.turn_on
-    target:
-      entity_id: scene.entryway_light_on_at_dusk
-    metadata: {}
+    action: light.turn_on
   mode: single
 - id: '1687468897387'
   alias: Front door open
@@ -143,23 +99,20 @@
 - id: '1688077923404'
   alias: Moms home
   description: ''
-  trigger:
-  - platform: device
-    device_id: bc9e0a1c5548a55e047b1af737286ab5
-    domain: device_tracker
-    entity_id: device_tracker.pixel_6_pro
-    type: enters
+  triggers:
+  - entity_id: person.steph_rapp
     zone: zone.home
-  condition:
+    event: enter
+    trigger: zone
+  conditions:
   - condition: state
     entity_id: input_boolean.sleep_mode
     state: 'off'
-  action:
-  - service: notify.mobile_app_pixel_7a
+  actions:
+  - action: notify.mobile_app_pixel_8
     data:
       message: Mom is home
-  - service: media_player.play_media
-    target:
+  - target:
       entity_id: media_player.kitchen_speaker
     data:
       media_content_id: media-source://tts/tts.piper?message=Mom+is+home.&language=en_US&voice=en_US-amy-low
@@ -175,24 +128,22 @@
         media_content_id: media-source://tts
       - media_content_type: provider
         media_content_id: media-source://tts/tts.piper?message=Mom+is+home.&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
   mode: single
 - id: '1688079262253'
   alias: Dad is home
   description: ''
-  trigger:
-  - platform: device
-    device_id: 07bd19b5c047b104b5d27150ea115e25
-    domain: device_tracker
-    entity_id: af9990c0cecb9f42f816f5e92f55f19d
-    type: enters
+  triggers:
+  - entity_id: person.robert_rapp
     zone: zone.home
-  condition:
+    event: enter
+    trigger: zone
+  conditions:
   - condition: state
     entity_id: input_boolean.sleep_mode
     state: 'off'
-  action:
-  - service: media_player.play_media
-    target:
+  actions:
+  - target:
       entity_id: media_player.kitchen_speaker
     data:
       media_content_id: media-source://tts/tts.piper?message=Dad+is+home.&language=en_US&voice=en_US-amy-low
@@ -208,83 +159,62 @@
         media_content_id: media-source://tts
       - media_content_type: provider
         media_content_id: media-source://tts/tts.piper?message=Dad+is+home.&language=en_US&voice=en_US-amy-low
-  - service: notify.mobile_app_pixel_7a
-    data:
+    action: media_player.play_media
+  - data:
       message: Dad is home
-  - service: notify.mobile_app_pixel_6_pro
-    data:
-      message: Dad is home
+    action: notify.mobile_app_pixel_6_pro
   mode: single
 - id: '1688360123591'
   alias: Turn off portable AC
   description: ''
-  trigger:
-  - type: temperature
-    platform: device
-    device_id: 961dea202cd3997632cb03589c870ace
-    entity_id: sensor.living_room_temperature
-    domain: sensor
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.living_room_temperature
     below: 78
-  condition: []
-  action:
-  - service: climate.set_temperature
-    data:
+  conditions: []
+  actions:
+  - data:
       temperature: 78
     target:
       device_id: cf9f5b8c154ffdd77935b918cd6d01a8
+    action: climate.set_temperature
   mode: single
 - id: '1689217497552'
   alias: Turn on AC 2
   description: ''
-  trigger:
-  - type: temperature
-    platform: device
-    device_id: 961dea202cd3997632cb03589c870ace
-    entity_id: sensor.living_room_temperature
-    domain: sensor
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.living_room_temperature
     above: 77
-  condition: []
-  action:
-  - service: climate.set_temperature
-    data:
+  conditions: []
+  actions:
+  - data:
       temperature: 63
     target:
       device_id: cf9f5b8c154ffdd77935b918cd6d01a8
-  mode: single
-- id: '1689286377604'
-  alias: Purge noisy power sensors
-  description: ''
-  trigger:
-  - platform: time
-    at: 02:00:00
-  - platform: time
-    at: 03:00:00
-  - platform: time
-    at: 05:00:00
-  - platform: time
-    at: 08:00:00
-  - platform: time
-    at: '11:00:00'
-  - platform: time
-    at: '13:00:00'
-  - platform: time
-    at: '17:00:00'
-  action:
-  - service: recorder.purge_entities
-    data: {}
+    action: climate.set_temperature
   mode: single
 - id: '1689908310648'
   alias: tv time
   description: ''
-  trigger:
-  - platform: conversation
-    command: it's tv time
-  condition: []
-  action:
-  - service: scene.turn_on
-    target:
-      entity_id: scene.tv_time
+  triggers:
+  - command: it's tv time
+    trigger: conversation
+  - device_id: 276688e9e311510af287b4c1d53d2b57
+    domain: bthome
+    type: button
+    subtype: long_press
+    trigger: device
+  conditions: []
+  actions:
+  - target:
+      entity_id: scene.tv_time_2
     metadata: {}
+    action: scene.turn_on
+    data: {}
+  - set_conversation_response: Enjoy the show
   mode: single
 - id: '1698264391261'
   alias: Alarm Armed
@@ -431,7 +361,7 @@
     to: 'off'
     for:
       hours: 0
-      minutes: 4
+      minutes: 1
       seconds: 0
   condition:
   - condition: state
@@ -487,20 +417,20 @@
     to: 'off'
     for:
       hours: 0
-      minutes: 4
+      minutes: 2
       seconds: 0
   condition:
   - condition: state
     state: 'off'
     entity_id: switch.master_bathroom_motion_32_stay_on
   action:
-  - service: light.turn_off
-    data: {}
+  - data: {}
     target:
       entity_id:
       - light.master_bathroom_mirror_light
       - light.kitchen_light
       - light.shellydimmer2_c45bbe791de0
+    action: light.turn_off
   mode: single
 - id: '1698277762507'
   alias: Master Bath Light On Night
@@ -532,47 +462,6 @@
     data: {}
     target:
       entity_id: light.kitchen_light
-  mode: single
-- id: '1698794761995'
-  alias: flicker livingroom
-  description: ''
-  trigger: []
-  condition: []
-  action:
-  - repeat:
-      count: 100000
-      sequence:
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 0
-          milliseconds: 250
-      - service: light.toggle
-        data: {}
-        target:
-          area_id:
-          - bathroom_2
-          - dining_room
-          - entryway
-          - hallway
-          - master_bathroom
-          - living_room
-          - kitchen
-          - master_bedroom
-  mode: single
-- id: '1699152186168'
-  alias: movies
-  description: ''
-  trigger:
-  - platform: conversation
-    command:
-    - Let's go to the movies
-  condition: []
-  action:
-  - service: scene.turn_on
-    target:
-      entity_id: scene.tv_time
-    metadata: {}
   mode: single
 - id: '1699296133483'
   alias: livingroom 74
@@ -611,24 +500,26 @@
 - id: '1699296481504'
   alias: living room 70
   description: ''
-  trigger:
-  - platform: conversation
-    command:
+  triggers:
+  - command:
     - Set the living room temperature to 70
     - Set the living room temperature at 70
-  - platform: device
-    device_id: 276688e9e311510af287b4c1d53d2b57
+    trigger: conversation
+  - device_id: 276688e9e311510af287b4c1d53d2b57
     domain: bthome
     type: button
     subtype: long_press
-  condition: []
-  action:
-  - service: climate.set_temperature
-    data:
+    trigger: device
+    enabled: false
+  conditions: []
+  actions:
+  - data:
       temperature: 70
       hvac_mode: cool
     target:
-      device_id: 961dea202cd3997632cb03589c870ace
+      device_id:
+      - 8784e3b88ed13de4b3a5f49c803d5614
+    action: climate.set_temperature
   mode: single
 - id: '1699296510999'
   alias: living room 76
@@ -667,20 +558,17 @@
 - id: '1703201437675'
   alias: Dad left work
   description: ''
-  trigger:
-  - platform: device
-    device_id: 07bd19b5c047b104b5d27150ea115e25
-    domain: device_tracker
-    entity_id: af9990c0cecb9f42f816f5e92f55f19d
-    type: leaves
+  triggers:
+  - entity_id: person.robert_rapp
     zone: zone.bert_work
-  condition: []
-  action:
-  - service: notify.mobile_app_pixel_6_pro
-    data:
+    event: leave
+    trigger: zone
+  conditions: []
+  actions:
+  - data:
       message: Dad left work
-  - service: media_player.play_media
-    target:
+    action: notify.mobile_app_pixel_6_pro
+  - target:
       entity_id: media_player.kitchen_speaker
     data:
       media_content_id: media-source://tts/tts.piper?message=Dad+left+work&language=en_US&voice=en_US-amy-low
@@ -696,6 +584,7 @@
         media_content_id: media-source://tts
       - media_content_type: provider
         media_content_id: media-source://tts/tts.piper?message=Dad+left+work&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
   mode: single
 - id: '1705535746064'
   alias: Meat Thermometer Automation
@@ -740,46 +629,6 @@
       effect: Fast Pulse
     target:
       entity_id: light.meatthermometer_rgb_led
-  mode: single
-- id: '1709189888503'
-  alias: Kitchen light at night
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.kitchen_light_2
-    from: 'off'
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: input_boolean.sleep_mode
-    state: 'on'
-  action:
-  - service: light.turn_on
-    target:
-      entity_id: light.kitchen_light_2
-    data:
-      brightness_pct: 30
-  mode: single
-- id: '1709190547323'
-  alias: Kitchen light day
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.kitchen_light_2
-    from: 'off'
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: input_boolean.sleep_mode
-    state: 'off'
-  action:
-  - service: light.turn_on
-    target:
-      entity_id: light.kitchen_light_2
-    data:
-      brightness_pct: 100
   mode: single
 - id: '1710006812524'
   alias: mute living room tv
@@ -915,11 +764,6 @@
   alias: BT Main lights off
   description: ''
   trigger:
-  - platform: device
-    device_id: 276688e9e311510af287b4c1d53d2b57
-    domain: bthome
-    type: button
-    subtype: press
   - type: turned_on
     platform: device
     device_id: 731af499661215eb47a3f4225a7efa1b
@@ -933,22 +777,22 @@
   - platform: conversation
     command:
     - Main lights off
-  condition: []
-  action:
-  - service: scene.turn_on
-    metadata: {}
-    target:
-      entity_id: scene.main_lights_off
-  mode: single
-- id: '1710958592214'
-  alias: BT Main lights on
-  description: ''
-  trigger:
   - platform: device
     device_id: 276688e9e311510af287b4c1d53d2b57
     domain: bthome
     type: button
     subtype: double_press
+  condition: []
+  action:
+  - metadata: {}
+    target:
+      entity_id: scene.main_lights_off
+    action: scene.turn_on
+  mode: single
+- id: '1710958592214'
+  alias: BT Main lights on
+  description: ''
+  trigger:
   - type: turned_on
     platform: device
     device_id: 731af499661215eb47a3f4225a7efa1b
@@ -963,12 +807,18 @@
     command:
     - I can't see
     - Main lights on
+    - I cannot see
+  - platform: device
+    device_id: 276688e9e311510af287b4c1d53d2b57
+    domain: bthome
+    type: button
+    subtype: press
   condition: []
   action:
-  - service: scene.turn_on
-    metadata: {}
+  - metadata: {}
     target:
       entity_id: scene.main_lights_on
+    action: scene.turn_on
   mode: single
 - id: '1710958716707'
   alias: BT Toggle Living Room Light
@@ -990,15 +840,15 @@
 - id: '1712375126559'
   alias: Morning scene activate
   description: ''
-  trigger:
-  - platform: time
-    at: 07:00:00
-  condition: []
-  action:
-  - service: scene.turn_on
-    metadata: {}
+  triggers:
+  - at: 05:30:00
+    trigger: time
+  conditions: []
+  actions:
+  - metadata: {}
     target:
       entity_id: scene.morning
+    action: scene.turn_on
   mode: single
 - id: '1712970456537'
   alias: Something on roof
@@ -1044,7 +894,7 @@
   action:
   - type: turn_on
     device_id: e91e27cc6c293a04b76f172788ddafed
-    entity_id: e9f63433c14b8c80395a9e4442ac283c
+    entity_id: a5ce1c40a25a91d3e38813a85498bfe2
     domain: light
   mode: single
 - id: '1713280738451'
@@ -1059,7 +909,7 @@
   action:
   - type: turn_off
     device_id: e91e27cc6c293a04b76f172788ddafed
-    entity_id: e9f63433c14b8c80395a9e4442ac283c
+    entity_id: a5ce1c40a25a91d3e38813a85498bfe2
     domain: light
   mode: single
 - id: '1715727940601'
@@ -1081,21 +931,20 @@
 - id: '1716766309312'
   alias: Magic Room Door Alarm
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.magic_room_door
+  triggers:
+  - entity_id:
+    - binary_sensor.magicroom75_magic_room_door
     to: 'on'
     for:
       hours: 0
-      minutes: 1
+      minutes: 5
       seconds: 0
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - repeat:
       sequence:
-      - service: media_player.play_media
-        target:
+      - target:
           entity_id: media_player.kitchen_speaker
         data:
           media_content_id: media-source://media_source/local/PXL_20230916_1604533273.mp3
@@ -1109,6 +958,7 @@
           - {}
           - media_content_type: app
             media_content_id: media-source://media_source
+        action: media_player.play_media
       - delay:
           hours: 0
           minutes: 0
@@ -1127,18 +977,19 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.mailbox_mail_box
+    - binary_sensor.mailbox2_mail_box
     from:
     to: 'on'
+  - platform: mqtt
+    topic: status/mailbox/open
   condition: []
   action:
-  - service: media_player.volume_set
-    target:
+  - target:
       entity_id: media_player.kitchen_speaker
     data:
       volume_level: 0.75
-  - service: media_player.play_media
-    target:
+    action: media_player.volume_set
+  - target:
       entity_id: media_player.kitchen_speaker
     data:
       media_content_id: media-source://media_source/local/Blues Clues Mail Time Song
@@ -1154,6 +1005,7 @@
       - media_content_type: app
         media_content_id: media-source://media_source
     enabled: true
+    action: media_player.play_media
   mode: single
 - id: '1719160057206'
   alias: Raining
@@ -1197,7 +1049,7 @@
     to: 'off'
     for:
       hours: 0
-      minutes: 5
+      minutes: 1
       seconds: 0
     from:
   condition:
@@ -1237,26 +1089,48 @@
 - id: '1719277353809'
   alias: Bedtime Button On
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - input_boolean.bed_time_button
     to: 'on'
-  condition: []
-  action:
-  - service: scene.turn_on
-    metadata: {}
+    trigger: state
+  conditions: []
+  actions:
+  - metadata: {}
     target:
       entity_id: scene.bed_time
-  - service: input_boolean.turn_on
+    action: scene.turn_on
+    data: {}
+    enabled: false
+  - action: light.turn_off
+    metadata: {}
+    data: {}
     target:
+      area_id:
+      - dining_room
+      - kitchen
+      - lanai
+      - hallway
+      - living_room
+  - action: fan.turn_off
+    metadata: {}
+    data: {}
+    target:
+      area_id: living_room
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      area_id: dining_room
+  - target:
       entity_id: input_boolean.sleep_mode
     data: {}
-  - service: switch.turn_on
-    target:
+    action: input_boolean.turn_on
+  - target:
       entity_id:
       - switch.esp32c_stay_off
     data: {}
+    action: switch.turn_on
   mode: single
 - id: '1719277627951'
   alias: Bedtime Button Off
@@ -1305,48 +1179,1178 @@
   - service: light.turn_on
     target:
       entity_id:
-      - light.hall_light
       - light.extra_bulb
+      device_id: e91e27cc6c293a04b76f172788ddafed
     data: {}
   mode: single
 - id: '1719683444453'
-  alias: Main House Empty
+  alias: Main House No movement
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.livingroom_presence
     to: 'off'
     for:
       hours: 0
       minutes: 30
       seconds: 0
-  condition: []
-  action:
-  - service: media_player.turn_off
-    target:
+    trigger: state
+  - entity_id:
+    - binary_sensor.pantry_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    trigger: state
+  conditions:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.livingroom_presence
+      state: 'off'
+      for:
+        hours: 0
+        minutes: 30
+        seconds: 0
+      enabled: true
+    - condition: state
+      entity_id: binary_sensor.pantry_presence
+      state: 'off'
+      enabled: true
+      for:
+        hours: 0
+        minutes: 30
+        seconds: 0
+    enabled: true
+  actions:
+  - target:
       entity_id: media_player.projector_2
     data: {}
-    enabled: false
-  - service: scene.turn_on
-    metadata: {}
+    enabled: true
+    action: media_player.turn_off
+  - metadata: {}
     target:
       entity_id: scene.main_lights_off
+    action: scene.turn_on
+    data: {}
+    enabled: false
+  - data: {}
+    target:
+      area_id:
+      - dining_room
+      - kitchen
+      - living_room
+      - hallway
+      - lanai
+    action: light.turn_off
   mode: single
 - id: '1720095325668'
   alias: Press Projector Center Button
   description: ''
-  trigger:
-  - platform: conversation
-    command:
-    - Skip this
-    - Skip commercial
-  condition: []
-  action:
-  - service: remote.send_command
-    metadata: {}
+  triggers:
+  - command:
+    - skip this
+    - skip commercial
+    - skip [the] commercial
+    - skip it
+    - skip
+    - press the button
+    - push the button
+    - click the button
+    trigger: conversation
+  conditions: []
+  actions:
+  - metadata: {}
     data:
       command: DPAD_CENTER
     target:
       entity_id: remote.projector
+    action: remote.send_command
+  - set_conversation_response: I pressed the button.
+  mode: single
+- id: '1720294625786'
+  alias: Thermometer Orange Done
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_orange_temperature
+    above: number.meatthermometerv4_orange_target_temperature
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.kitchen_speaker
+    enabled: true
+    action: media_player.volume_set
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: Orange thermometer is done
+    enabled: true
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  - target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Orange+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Orange thermometer has reached temperature
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Orange+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
+    enabled: true
+  mode: single
+- id: '1720757634758'
+  alias: Goodnight
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - '[I said ]good night sir'
+    - '[it''s ]bedtime'
+    - '[it is ]time for bed'
+    - bed time
+  condition: []
+  action:
+  - target:
+      entity_id: input_boolean.bed_time_button
+    data: {}
+    action: input_boolean.turn_on
+  - set_conversation_response: Good night
+  mode: single
+- id: '1723418547457'
+  alias: Big Garage Door Open
+  description: ''
+  trigger:
+  - type: opened
+    platform: device
+    device_id: 16366e8a86b542b8ac2c73c97a1dbc38
+    entity_id: 61fa3fa261c5ac67ba10a1a865a9b0f0
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://media_source/local/8d82b5_Speedy_Gonzales_Arriba_Andale_Sound_Effect.mp3
+      media_content_type: audio/mpeg
+    metadata:
+      title: 8d82b5_Speedy_Gonzales_Arriba_Andale_Sound_Effect.mp3
+      thumbnail:
+      media_class: music
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://media_source
+    enabled: true
+  mode: single
+- id: '1728853232223'
+  alias: Slow lights on
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.livingroom_presence
+    from:
+    to: 'on'
+  conditions:
+  - condition: time
+    after: 06:30:00
+    before: 08:00:00
+    enabled: true
+  - condition: device
+    type: is_off
+    device_id: 93ff74bf6bf2f7fbdf8d969791da69a5
+    entity_id: aa20c1b8aa29a27c39c5101eae760676
+    domain: light
+  actions:
+  - action: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.slow_lights_on
+    data: {}
+  mode: single
+- id: '1728944627282'
+  alias: Toggle power on the projector
+  description: ''
+  triggers:
+  - trigger: conversation
+    command: Turn on the projector
+  - trigger: conversation
+    command:
+    - Turn off the projector
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - switch.voiceassist8_power_projector_nec
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - switch.livingroom_power_projector_nec
+    enabled: true
+  - set_conversation_response: Turned on the projector
+  mode: single
+- id: '1732056465763'
+  alias: Fast Forward
+  description: ''
+  triggers:
+  - trigger: conversation
+    command: Fast forward
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      command: DPAD_RIGHT
+      num_repeats: 3
+    target:
+      entity_id: remote.projector
+    action: remote.send_command
+  - metadata: {}
+    data:
+      command: DPAD_CENTER
+    target:
+      entity_id: remote.projector
+    action: remote.send_command
+  - set_conversation_response: Fast forward
+  mode: single
+- id: '1732157316640'
+  alias: FrontDoorPicture
+  description: ''
+  triggers:
+  - type: opened
+    device_id: 0771de29a79fadf81a9e41ebe386fc92
+    entity_id: b320b77e25798effb926154aceccc6a7
+    domain: binary_sensor
+    trigger: device
+  - type: occupied
+    device_id: 1a2eba5e69256dd2e84671b8d93b6368
+    entity_id: e3ecb98b886df1378db9d6e7b68b021e
+    domain: binary_sensor
+    trigger: device
+    id: FrontDoorMotionTrigger
+  conditions: []
+  actions:
+  - if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - FrontDoorMotionTrigger
+      - condition: state
+        entity_id: switch.ignore_motion
+        state: 'on'
+    then:
+    - stop: ''
+    else:
+    - action: input_text.set_value
+      metadata: {}
+      data:
+        value: '{{states(''sensor.yearnumber'')}}-{{ states(''sensor.monthnumber'')}}-{{states(''sensor.daynumber'')}}--{{states(''sensor.hour'')}}-{{states(''sensor.minute'')}}--{{states(''counter.picturenumber'')}}'
+      target:
+        entity_id: input_text.espcam2filename
+    - action: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.living_room_light_2
+      enabled: false
+    - action: camera.snapshot
+      metadata: {}
+      data:
+        filename: www/espcam2-{{ states('input_text.espcam2filename') }}.jpg
+      target:
+        entity_id: camera.espcam2_my_camera
+    - action: notify.mobile_app_pixel_8
+      metadata: {}
+      data:
+        title: Front Door
+        message: Front Door opened at {{now().strftime("%H:%M %d-%m-%y")}}
+        data:
+          image: https://homeassistant.rappware.dev/local/espcam2-{{ states('input_text.espcam2filename')
+            }}.jpg
+          actions:
+          - action: URI
+            title: Still shot
+            uri: https://homeassistant.rappware.dev/local/espcam2-{{ states('input_text.espcam2filename')
+              }}.jpg
+          - action: URI
+            title: Live View
+            uri: /dashboard-cameras/default_view
+    - action: notify.mobile_app_pixel_6_pro
+      metadata: {}
+      data:
+        message: Front Door opened at {{now().strftime("%H:%M %d-%m-%y")}}
+        data:
+          image: https://homeassistant.rappware.dev/local/espcam2-{{ states('input_text.espcam2filename')
+            }}.jpg
+          actions:
+          - action: URI
+            title: Still shot
+            uri: https://homeassistant.rappware.dev/local/espcam2-{{ states('input_text.espcam2filename')
+              }}.jpg
+          - action: URI
+            title: Live View
+            uri: /dashboard-cameras/default_view
+        title: Front Door
+      enabled: true
+    - action: camera.record
+      metadata: {}
+      data:
+        filename: www/espcam2-{{ states('input_text.espcam2filename') }}.mp4
+        duration: 10
+      target:
+        entity_id: camera.espcam2_my_camera
+      enabled: false
+    - action: browser_mod.popup
+      metadata: {}
+      data:
+        dismissable: true
+        browser_id:
+        - e5e61c60b04ae334e74f6d6448cb8c34
+        content:
+          type: picture-entity
+          entity: camera.espcam2_my_camera
+        title: Front Door
+        autoclose: false
+        timeout: 30000
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+      enabled: true
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.living_room_light_2
+      enabled: false
+    - action: counter.increment
+      metadata: {}
+      data: {}
+      target:
+        entity_id: counter.picturenumber
+  mode: single
+- id: '1732505144108'
+  alias: SUN set lights on at
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: -00:15:00
+  conditions: []
+  actions:
+  - condition: state
+    entity_id: binary_sensor.everyoneishome
+    state: 'off'
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.entryway_light_switch_0
+  mode: single
+- id: '1732505330341'
+  alias: SUN rise lights off at
+  description: ''
+  triggers:
+  - event: sunrise
+    trigger: sun
+  - at: 01:00:00
+    trigger: time
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      area_id:
+      - dining_room
+      - kitchen
+      - living_room
+      - hallway
+      - lanai
+    action: light.turn_off
+  - condition: state
+    entity_id: binary_sensor.everyoneishome
+    state: 'on'
+  - data: {}
+    target:
+      device_id:
+      - 868ebf898e9ff2f0bef0e829b48ae85a
+    action: light.turn_off
+  mode: single
+- id: '1732506498271'
+  alias: Dad left home
+  description: ''
+  triggers:
+  - entity_id: person.robert_rapp
+    zone: zone.home
+    event: leave
+    trigger: zone
+  conditions:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  actions:
+  - data:
+      message: Dad left home
+    action: notify.mobile_app_pixel_6_pro
+  mode: single
+- id: '1732554245696'
+  alias: set name
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.front_door_door
+    from: 'off'
+    to: 'on'
+  conditions: []
+  actions:
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ states(''sensor.time'') }}'
+    target:
+      entity_id: input_text.espcam2filename
+  mode: single
+- id: '1732806321263'
+  alias: turkey
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_orange_temperature
+    above: 160
+    value_template: input_number.targettemperature
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_blue_temperature
+    above: 160
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_green_temperature
+    above: 160
+  conditions: []
+  actions:
+  - action: tts.speak
+    metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: Check the turkey
+    target:
+      entity_id:
+      - tts.piper_2
+  mode: single
+- id: '1733018403347'
+  alias: Wake Up Round Display
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.roundscreen1_qmi8658_gyro_x
+    - sensor.roundscreen1_qmi8658_gyro_y
+    - sensor.roundscreen1_qmi8658_gyro_z
+    above: 30
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: c1129f5d013074b6e9fc3aabcb6eeab9
+    entity_id: fe807b903e337764df589fd8fe82d84c
+    domain: light
+  - action: number.set_value
+    metadata: {}
+    data:
+      value: '0'
+    target:
+      entity_id: number.roundscreen1_tick_count
+  mode: single
+- id: '1733019403409'
+  alias: Turn off round screen on flip
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.roundscreen1_qmi8658_acceleration_z
+    above: 0.7
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: c1129f5d013074b6e9fc3aabcb6eeab9
+    entity_id: fe807b903e337764df589fd8fe82d84c
+    domain: light
+  - action: number.set_value
+    metadata: {}
+    data:
+      value: '50'
+    target:
+      entity_id: number.roundscreen1_tick_count
+  mode: single
+- id: '1734189144064'
+  alias: Turn on Christmas decorations
+  description: ''
+  triggers:
+  - trigger: conversation
+    command:
+    - turn on the christmas lights
+    - turn on the christmas decorations
+    - it's christmas time
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      label_id: christmas_decorations
+  - set_conversation_response: Ho ho ho
+  mode: single
+- id: '1734189171617'
+  alias: Turn off Christmas decorations
+  description: ''
+  triggers:
+  - trigger: conversation
+    command:
+    - turn off the christmas lights
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      label_id: christmas_decorations
+  mode: single
+- id: '1735013733009'
+  alias: christmasledsstep1
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    seconds: '1'
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 0
+      - 0
+      - 255
+    target:
+      label_id: christmasleds
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 20
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 0
+      - 255
+      - 0
+    target:
+      label_id: christmasleds
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 20
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+    target:
+      label_id: christmasleds
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 15
+      milliseconds: 0
+    enabled: false
+  mode: single
+- id: '1735844049187'
+  alias: Temperature wrong
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_ambient_temperature
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    above: 240
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_ambient_temperature
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    below: 210
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: The smoker is out of specifications.
+    enabled: true
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  mode: single
+- id: '1735844632487'
+  alias: Thermometer Blue Done
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.meatthermometerv4_blue_temperature
+    above: 144
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.kitchen_speaker
+    enabled: false
+    action: media_player.volume_set
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: Orange thermometer is done
+    enabled: true
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  - target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Orange+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Orange thermometer has reached temperature
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Orange+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
+    enabled: false
+  mode: single
+- id: '1735844788023'
+  alias: Thermometer Green Done
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.meatthermometerv4_green_temperature
+    above: 144
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.kitchen_speaker
+    enabled: false
+    action: media_player.volume_set
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: Orange thermometer is done
+    enabled: true
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  - target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Orange+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Orange thermometer has reached temperature
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Orange+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
+    enabled: false
+  mode: single
+- id: '1740326276266'
+  alias: Thermometer Blue Done
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_blue_temperature
+    above: number.meatthermometerv4_blue_target_temperature
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.kitchen_speaker
+    enabled: true
+    action: media_player.volume_set
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: Blue thermometer is done
+    enabled: false
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  - target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Blue+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Blue thermometer has reached temperature
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Blue+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
+    enabled: true
+  mode: single
+- id: '1740326367773'
+  alias: Thermometer Green Done
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.meatthermometerv4_green_temperature
+    above: number.meatthermometerv4_green_target_temperature
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.kitchen_speaker
+    enabled: true
+    action: media_player.volume_set
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker
+      message: Blue thermometer is done
+    enabled: false
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  - target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=Green+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: Green thermometer has reached temperature
+      thumbnail: https://brands.home-assistant.io/_/tts/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=Green+thermometer+has+reached+temperature&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
+    enabled: true
+  mode: single
+- id: '1740699810574'
+  alias: Entryway Light on When Front Door Opens
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.front_door_door
+    from:
+    to: 'on'
+  conditions:
+  - condition: time
+    after: '18:00:00'
+    before: '23:59:00'
+    weekday:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.entryway_light_switch_0
+  mode: single
+- id: '1741244046998'
+  alias: Fan on when hot
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.voiceassist10_ntc_temperature
+    above: 37
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.christmas_lights
+  mode: single
+- id: '1741244212129'
+  alias: fan off when cool
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.voiceassist10_ntc_temperature
+    below: 36
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.christmas_lights
+  mode: single
+- id: '1743272235901'
+  alias: Pantry Light On
+  description: ''
+  triggers:
+  - type: powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: 42f6ca6d5d7187a1f8a6f846fc8b89ab
+    domain: binary_sensor
+    trigger: device
+  - type: powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: 25650c65a8a70e36f2006ff025a87203
+    domain: binary_sensor
+    trigger: device
+  - type: powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: 3c681fc1967fdc6b69d2b9b74180a9b6
+    domain: binary_sensor
+    trigger: device
+  - type: powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: b63156efb908a9f770789d7d9b8d51c0
+    domain: binary_sensor
+    trigger: device
+  conditions: []
+  actions:
+  - if:
+    - condition: time
+      after: '18:00:00'
+      before: 08:00:00
+      weekday:
+      - sat
+      - fri
+      - thu
+      - wed
+      - tue
+      - mon
+      - sun
+    then:
+    - if:
+      - condition: time
+        after: '21:00:00'
+        weekday:
+        - sat
+        - fri
+        - thu
+        - wed
+        - tue
+        - mon
+        - sun
+      then:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 11
+        target:
+          entity_id: light.shellyplusrgbwpm_b0a73240db00_light_3
+      else:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.shellyplusrgbwpm_b0a73240db00_light_3
+    else:
+    - action: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.shellyplusrgbwpm_b0a73240db00_light_2
+  mode: single
+- id: '1743272257600'
+  alias: Pantry Light Off
+  description: ''
+  triggers:
+  - type: not_powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: 42f6ca6d5d7187a1f8a6f846fc8b89ab
+    domain: binary_sensor
+    trigger: device
+  - type: not_powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: 25650c65a8a70e36f2006ff025a87203
+    domain: binary_sensor
+    trigger: device
+  - type: not_powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: 3c681fc1967fdc6b69d2b9b74180a9b6
+    domain: binary_sensor
+    trigger: device
+  - type: not_powered
+    device_id: 349c0c18628c18a2042a6ceec475c527
+    entity_id: b63156efb908a9f770789d7d9b8d51c0
+    domain: binary_sensor
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.shellyplusrgbwpm_b0a73240db00_light_2
+      - light.shellyplusrgbwpm_b0a73240db00_light_3
+  mode: single
+- id: '1744872346302'
+  alias: Start coffee at 5am
+  description: ''
+  triggers:
+  - trigger: time
+    at: 05:00:00
+  conditions: []
+  actions: []
+  mode: single
+- id: '1747240278258'
+  alias: Dryer is too hot
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.dryercontrol_dryer_temperature
+    above: 130
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id:
+      - media_player.kitchen_speaker
+    enabled: true
+    action: media_player.volume_set
+  - target:
+      entity_id: media_player.kitchen_speaker
+    data:
+      media_content_id: media-source://tts/tts.piper?message=The+dryer+is+too+hot.&language=en_US&voice=en_US-amy-low
+      media_content_type: provider
+    metadata:
+      title: The dryer is too hot.
+      thumbnail: https://brands.home-assistant.io/_/wyoming/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/tts.piper?message=The+dryer+is+too+hot.&language=en_US&voice=en_US-amy-low
+    action: media_player.play_media
+  mode: single
+- id: '1747655840795'
+  alias: Dryer Timer Finished
+  description: ''
+  triggers:
+  - event_type: timer.finished
+    event_data:
+      entity_id: timer.dryertimer
+    trigger: event
+  conditions: []
+  actions:
+  - action: esphome.dryercontrol_stop_the_dryer
+    data: {}
+  - action: tts.speak
+    metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker_2
+      message: The dryer is done
+    target:
+      entity_id:
+      - tts.piper_2
+  mode: single
+- id: '1747692550697'
+  alias: Pet Lights On
+  description: ''
+  triggers:
+  - trigger: time
+    at: 08:00:00
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 52c06161259f289311d416d5df81ad87
+    entity_id: 1f2d2ab14cfccb7027061b7add18dfd0
+    domain: light
+  - type: turn_on
+    device_id: 58d7ec638a43c987b37b55839f65a097
+    entity_id: c0d0b1cdda1f3c44118d3f7d46a8f109
+    domain: light
+  mode: single
+- id: '1747692609446'
+  alias: Pet Lights Off
+  description: ''
+  triggers:
+  - trigger: time
+    at: '20:00:00'
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 52c06161259f289311d416d5df81ad87
+    entity_id: 1f2d2ab14cfccb7027061b7add18dfd0
+    domain: light
+  - type: turn_off
+    device_id: 58d7ec638a43c987b37b55839f65a097
+    entity_id: c0d0b1cdda1f3c44118d3f7d46a8f109
+    domain: light
+  mode: single
+- id: '1748847168159'
+  alias: food is done
+  description: ''
+  triggers: []
+  conditions: []
+  actions:
+  - metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.googlehome9215
+      message: food is done
+    enabled: true
+    action: tts.speak
+    target:
+      entity_id: tts.piper
+  mode: single
+- id: '1749265717105'
+  alias: Check dryer reminder
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.dryercontrol_dryer_needs_checked
+    to: 'on'
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.dryercontrol_dryer_needs_checked
+    to: 'on'
+    for:
+      hours: 2
+      minutes: 0
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.dryercontrol_dryer_needs_checked
+    to: 'on'
+    for:
+      hours: 3
+      minutes: 0
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.dryercontrol_dryer_needs_checked
+    to: 'on'
+    for:
+      hours: 4
+      minutes: 0
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.dryercontrol_dryer_needs_checked
+    to: 'on'
+    for:
+      hours: 5
+      minutes: 0
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.dryercontrol_dryer_needs_checked
+    to: 'on'
+    for:
+      hours: 6
+      minutes: 0
+      seconds: 0
+  conditions: []
+  actions:
+  - action: tts.speak
+    metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.kitchen_speaker_2
+      message: Please check the dryer
+    target:
+      entity_id:
+      - tts.piper_2
   mode: single

@@ -1,5 +1,7 @@
 # Loads default set of integrations. Do not remove.
 default_config:
+# Example configuration.yaml entry
+zeroconf:
 
 # Load frontend themes from the themes folder
 frontend:
@@ -70,3 +72,124 @@ alarm_control_panel:
 #  device_path: /dev/apex_0
 # assist_pipeline:
 #   debug_recording_dir: /share/assist_pipeline
+mqtt:
+  sensor:
+    - name: "Youtube video"
+      state_topic: "config/projector/youtubeurl"
+      
+sensor:
+  - platform: template
+    sensors:
+        timenew:
+          friendly_name: "XTime"
+          value_template: >
+            {% set time = states('sensor.time') %}
+            {% set hour = time[:2]|int %}
+            {% set timenew = '{:2d}:{}'.format(hour if hour == 12 else hour % 12, time[3:5]) %}
+            {% set hournew = timenew[:2]|int %}
+            {% set hournew2 = (hournew + 12 if hournew == 0 else hournew) %}
+            {{ '{:2d}:{} {}'.format(hournew2 if hournew2 == 12 else hournew % 12, timenew[3:5], 'PM' if hour>11 else 'AM') }}
+    
+        weekday:
+          friendly_name: Weekday
+          value_template: >
+            {% set weekday = now().weekday() %} 
+            {% if (weekday == 0) %} Monday 
+            {% elif (weekday == 1) %} Tuesday 
+            {% elif (weekday == 2) %} Wednesday
+            {% elif (weekday == 3) %} Thursday 
+            {% elif (weekday == 4) %} Friday
+            {% elif (weekday == 5) %} Saturday 
+            {% elif (weekday == 6) %} Sunday
+            {% endif %}
+    
+        month:
+          friendly_name: Month
+          value_template: >
+            {% set weekday = now().month %} 
+            {% if (weekday == 1) %} January 
+            {% elif (weekday == 2) %} February 
+            {% elif (weekday == 3) %} March 
+            {% elif (weekday == 4) %} April  
+            {% elif (weekday == 5) %} May
+            {% elif (weekday == 6) %} June 
+            {% elif (weekday == 7) %} July 
+            {% elif (weekday == 8) %} August 
+            {% elif (weekday == 9) %} September 
+            {% elif (weekday == 10) %} October 
+            {% elif (weekday == 11) %} November 
+            {% elif (weekday == 12) %} December 
+            {% endif %}
+        
+        monthnumber:
+          friendly_name: MonthNumber
+          value_template: "{{now().month}}"
+          
+        yearnumber:
+          friendly_name: YearNumber
+          value_template: "{{now().year}}"
+          
+        daynumber:
+          friendly_name: DayNumber
+          value_template: "{{now().day}}"
+          
+        hour:
+          friendly_name: Hour
+          value_template: "{{now().hour}}"
+          
+        minute:
+          friendly_name: Minute
+          value_template: "{{now().minute}}"
+          
+        secondx:
+          friendly_name: Second
+          value_template: "{{now().second}}"
+# binary_sensor:
+#   - platform: template
+#     sensors:
+#       dryer_is_running:
+#         friendly_name: "Dryer is Running"
+#         value_template: "{{ states('sensor.dryer_is_running') }}"
+#       dryer_is_paused:
+#         friendly_name: "Dryer is Paused"
+#         value_template: "{{ states('sensor.dryer_is_paused') }}"
+light:
+  - platform: template
+    lights:
+      cct_led_strip:
+        friendly_name: "CCT LED Strip"
+        unique_id: "cct_led_strip"
+        value_template: "{{ states('light.shellyplusrgbwpm_b0a73240db00_light_3') == 'on' or states('light.shellyplusrgbwpm_b0a73240db00_light_2') == 'on' }}"
+        turn_on:
+          - service: light.turn_on
+            target:
+              entity_id:
+                - light.shellyplusrgbwpm_b0a73240db00_light_3
+                - light.shellyplusrgbwpm_b0a73240db00_light_2
+        turn_off:
+          - service: light.turn_off
+            target:
+              entity_id:
+                - light.shellyplusrgbwpm_b0a73240db00_light_3
+                - light.shellyplusrgbwpm_b0a73240db00_light_2
+        set_level:
+          - service: light.turn_on
+            data:
+              entity_id:
+                - light.shellyplusrgbwpm_b0a73240db00_light_3
+                - light.shellyplusrgbwpm_b0a73240db00_light_2
+              brightness: "{{ brightness }}"
+        set_temperature:
+          - service: light.turn_on
+            data:
+              entity_id: light.shellyplusrgbwpm_b0a73240db00_light_3
+              brightness: >
+                {% set current_brightness = state_attr('light.shellyplusrgbwpm_b0a73240db00_light_3', 'brightness') | int | default(255) %}
+                {{ (1 - (color_temp | float | max(154) | min(370) - 154) / (370 - 154)) * current_brightness | int }}
+          - service: light.turn_on
+            data:
+              entity_id: light.shellyplusrgbwpm_b0a73240db00_light_2
+              brightness: >
+                {% set current_brightness = state_attr('light.shellyplusrgbwpm_b0a73240db00_light_2', 'brightness') | int | default(255) %}
+                {{ ((color_temp | float | max(154) | min(370) - 154) / (370 - 154)) * current_brightness | int }}
+        temperature_template: "{{ color_temp }}"

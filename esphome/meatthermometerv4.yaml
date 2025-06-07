@@ -211,25 +211,25 @@ sensor:
     sensor: source_sensor1
     accuracy_decimals: 0
     filters:
-    - clamp:
-        max_value: 2009005
-        min_value: 2328
-        ignore_out_of_range: true
+    # - clamp:
+    #     max_value: 2009005
+    #     min_value: 2328
+    #     ignore_out_of_range: true
     - median:
-        window_size: 99
+        window_size: 60
         send_every: 1
     configuration: DOWNSTREAM
     # resistor: 9700Ohm
     # resistor: 9100Ohm
-    resistor: 100kOhm
+    resistor: 10kOhm # HERE
     # resistor: 47kOhm
     name: Ambient Resistance
-    on_value:
-      then:
-        - logger.log:
-            level: INFO
-            format: "resistance_sensor1 = %.0f Ohm"
-            args: [ 'id(resistance_sensor1).state' ]
+    # on_value:
+    #   then:
+    #     - logger.log:
+    #         level: INFO
+    #         format: "resistance_sensor1 = %.0f Ohm"
+    #         args: [ 'id(resistance_sensor1).state' ]
 
   - platform: resistance
     id: resistance_sensor1a
@@ -243,7 +243,7 @@ sensor:
     configuration: DOWNSTREAM
     # resistor: 9700Ohm
     # resistor: 9100Ohm
-    resistor: 100kOhm
+    resistor: 10kOhm # HERE
     # resistor: 47kOhm
     name: Ambient Resistance Realtime
 
@@ -257,7 +257,7 @@ sensor:
         min_value: 2328
         ignore_out_of_range: true
     - median:
-        window_size: 99
+        window_size: 60
         send_every: 1
     configuration: DOWNSTREAM
     # resistor: 9940Ohm
@@ -292,7 +292,7 @@ sensor:
         min_value: 2328
         ignore_out_of_range: true
     - median:
-        window_size: 99
+        window_size: 60
         send_every: 1
     configuration: DOWNSTREAM
     # resistor: 9960Ohm
@@ -326,7 +326,7 @@ sensor:
         min_value: 2328
         ignore_out_of_range: true
     - median:
-        window_size: 99
+        window_size: 60
         send_every: 1
     configuration: DOWNSTREAM
     # resistor: 9980Ohm
@@ -415,3 +415,31 @@ interval:
       - switch.turn_on: ntc_vcc4
       - component.update: source_sensor4
       - switch.turn_off: ntc_vcc4
+
+number:
+  - platform: template
+    name: "Orange Target Temperature"
+    optimistic: true
+    min_value: 50
+    max_value: 400
+    initial_value: 160
+    step: 1
+    id: orangetargettemp
+
+  - platform: template
+    name: "Green Target Temperature"
+    optimistic: true
+    min_value: 50
+    max_value: 400
+    initial_value: 160
+    step: 1
+    id: greentargettemp
+
+  - platform: template
+    name: "Blue Target Temperature"
+    optimistic: true
+    min_value: 50
+    max_value: 400
+    initial_value: 160
+    step: 1
+    id: bluetargettemp

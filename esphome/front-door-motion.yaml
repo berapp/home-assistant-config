@@ -39,7 +39,7 @@ external_components:
     components: [ serial ]
 # Enable logging
 logger:
-  level: INFO  #You Can Use "INFO" Level
+  level: NONE  #You Can Use "INFO" Level
   baud_rate: 0
 # Enable Home Assistant API
 api:
@@ -111,7 +111,7 @@ interval:
         }
 number:
   - platform: template
-    name: ${upper_devicename} LD1125H mth1 #mth1 is 0~2.8m Sensitivity.
+    name: ${upper_devicename} LD1125H mth1 0~2.8m Sensitivity #mth1 is 0~2.8m Sensitivity.
     id: LD1125H_mth1
     icon: "mdi:cogs"
     optimistic: true
@@ -128,7 +128,7 @@ number:
               std::string th1st = "mth1=" + str_sprintf("%.0f",x) +"\r\n";
               return std::vector<uint8_t>(th1st.begin(), th1st.end());
   - platform: template
-    name: ${upper_devicename} LD1125H mth2 #mth2 is 2.8~8m Sensitivity.
+    name: ${upper_devicename} LD1125H mth2 2.8~8m Sensitivity #mth2 is 2.8~8m Sensitivity.
     id: LD1125H_mth2
     icon: "mdi:cogs"
     optimistic: true
@@ -145,7 +145,7 @@ number:
               std::string th2st = "mth2=" + str_sprintf("%.0f",x) +"\r\n";
               return std::vector<uint8_t>(th2st.begin(), th2st.end());
   - platform: template
-    name: ${upper_devicename} LD1125H mth3 #mth3 is above 8m Sensitivity.
+    name: ${upper_devicename} LD1125H mth3 above 8m Sensitivity #mth3 is above 8m Sensitivity.
     id: LD1125H_mth3
     icon: "mdi:cogs"
     optimistic: true
@@ -162,7 +162,7 @@ number:
               std::string th3st = "mth3=" + str_sprintf("%.0f",x) +"\r\n";
               return std::vector<uint8_t>(th3st.begin(), th3st.end());
   - platform: template
-    name: ${upper_devicename} LD1125H rmax #rmax is max detection distance.
+    name: ${upper_devicename} LD1125H rmax max detection distance #rmax is max detection distance.
     id: LD1125H_rmax
     icon: "mdi:cogs"
     optimistic: true
@@ -266,37 +266,41 @@ binary_sensor:
     name: ${upper_devicename} LD1125H Movement
     id: LD1125H_Mov_Binary
     device_class: motion
-  - platform: gpio
-    id: frontdoorpresence
-    on_state:
-          if:
-            condition:
-              binary_sensor.is_on: frontdoorpresence
-            then:
-              - light.turn_on:
-                  id: presence_indicator
-                  brightness: 50%
-            else:
-              - light.turn_off: presence_indicator
-    name: "Front Door Presence"
-    pin:
-      number: 14
-      # inverted: true
-      mode: INPUT_PULLUP
+  # - platform: gpio
+  #   id: frontdoorpresence
+  #   on_state:
+  #         if:
+  #           condition:
+  #             binary_sensor.is_on: frontdoorpresence
+  #           then:
+  #             - light.turn_on:
+  #                 id: presence_indicator
+  #                 brightness: 50%
+  #           else:
+  #             - light.turn_off: presence_indicator
+  #   name: "Front Door Presence"
+  #   pin:
+  #     number: 14
+  #     # inverted: true
+  #     mode: INPUT_PULLUP
 
 
 
 ###########################################3
 
-output: 
-- platform: esp8266_pwm
-  id: presenceindicator_led
-  pin: GPIO2
-  inverted: true
+# output: 
+# - platform: esp8266_pwm
+#   id: presenceindicator_led
+#   pin: GPIO2
+#   inverted: true
 
-light:
-  - platform: monochromatic
-    id: presence_indicator
-    name: "Open Indicator"
-    output: presenceindicator_led
-    
+# light:
+#   - platform: monochromatic
+#     id: presence_indicator
+#     name: "Presence Indicator"
+#     output: presenceindicator_led
+switch:
+  - platform: template
+    id: ignore_motion
+    name: "Ignore Motion"
+    optimistic: true

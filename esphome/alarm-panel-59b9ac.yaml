@@ -10,7 +10,7 @@ api:
     key: !secret alarm-panel-59b9ac-api_encryption_key
 
 logger:
-  level: INFO
+  level: DEBUG
   logs:
     api: INFO
   
